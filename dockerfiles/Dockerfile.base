@@ -74,23 +74,25 @@ USER $USER
 
 ARG cache_dir="${HOME}/.cache"
 ARG local_dir="${HOME}/.local"
-ARG local_bin_dir="${local_dir}/bin"
-ARG local_profile_dir="${local_dir}/profile"
-ARG local_share_dir="${local_dir}/share"
+ARG local_dir_bin="${local_dir}/bin"
+ARG local_dir_profile="${local_dir}/profile"
+ARG local_dir_share="${local_dir}/share"
+ARG ssh_dir="${HOME}/.ssh"
 
 RUN mkdir -p \
   "$cache_dir" \
   "$local_dir" \
-  "$local_bin_dir" \
-  "$local_profile_dir" \
-  "$local_share_dir"
+  "$local_dir_bin" \
+  "$local_dir_profile" \
+  "$local_dir_share" \
+  "$ssh_dir"
 
 #===============================================================================
 # User profile configuration files
 #===============================================================================
 
-RUN git clone "$user_profile" "$local_profile_dir" \
-  && bash "${local_profile_dir}/init.sh"
+RUN git clone "$user_profile" "$local_dir_profile" \
+  && bash "${local_dir_profile}/init.sh"
 
 #===============================================================================
 # Install git prompt
@@ -98,7 +100,7 @@ RUN git clone "$user_profile" "$local_profile_dir" \
 #===============================================================================
 
 ARG app_id='git'
-ARG app_dir="${local_share_dir}/${app_id}"
+ARG app_dir="${local_dir_share}/${app_id}"
 
 RUN mkdir -p "$app_dir" \
   && curl -Lo \
@@ -110,7 +112,7 @@ RUN mkdir -p "$app_dir" \
 #===============================================================================
 
 ARG app_id='zsh'
-ARG app_dir="${local_share_dir}/${app_id}"
+ARG app_dir="${local_dir_share}/${app_id}"
 
 #===============================================================================
 # ## fzf-tab
@@ -126,7 +128,7 @@ RUN git clone \
 #===============================================================================
 
 ARG app_id='tmux'
-ARG app_dir="${local_share_dir}/${app_id}"
+ARG app_dir="${local_dir_share}/${app_id}"
 
 #===============================================================================
 # ## tmux-sensible
