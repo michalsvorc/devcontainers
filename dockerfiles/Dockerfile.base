@@ -1,0 +1,150 @@
+#===============================================================================
+# Base image
+#===============================================================================
+
+FROM debian:bullseye-slim
+
+#===============================================================================
+# Build arguments
+#===============================================================================
+
+ARG shell='/bin/zsh'
+ARG work_dir='work'
+ARG user_name
+ARG user_profile
+
+#===============================================================================
+# Update package repositories and install new packages
+#===============================================================================
+
+RUN apt-get update \
+  && DEBIAN_FRONTEND=noninteractive \
+  apt-get install \
+  --assume-yes \
+  --no-install-recommends \
+  --quiet \
+  ca-certificates \
+  curl \
+  exa \
+  fzf \
+  g++ \
+  git \
+  htop \
+  jq \
+  less \
+  mc \
+  openssh-client \
+  p7zip \
+  procps \
+  ripgrep \
+  rsync \
+  tmux \
+  unzip \
+  vim \
+  zsh \
+  zsh-syntax-highlighting \
+  && rm -rf /var/lib/apt/lists/*
+
+#===============================================================================
+# Set up a non-root user
+#===============================================================================
+
+RUN useradd \
+  --create-home \
+  --shell "$shell" \
+  --user-group \
+  "$user_name"
+
+#===============================================================================
+# Set user environment variables
+#===============================================================================
+
+ENV HOME "/home/${user_name}"
+ENV USER "$user_name"
+
+#===============================================================================
+# Set the non-root user
+#===============================================================================
+
+USER $USER
+
+#===============================================================================
+# Create $HOME directories
+#===============================================================================
+
+ARG cache_dir="${HOME}/.cache"
+ARG local_dir="${HOME}/.local"
+ARG local_bin_dir="${local_dir}/bin"
+ARG local_profile_dir="${local_dir}/profile"
+ARG local_share_dir="${local_dir}/share"
+
+RUN mkdir -p \
+  "$cache_dir" \
+  "$local_dir" \
+  "$local_bin_dir" \
+  "$local_profile_dir" \
+  "$local_share_dir"
+
+#===============================================================================
+# User profile configuration files
+#===============================================================================
+
+RUN git clone "$user_profile" "$local_profile_dir" \
+  && bash "${local_profile_dir}/init.sh"
+
+#===============================================================================
+# Install git prompt
+# Link: https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
+#===============================================================================
+
+ARG app_id='git'
+ARG app_dir="${local_share_dir}/${app_id}"
+
+RUN mkdir -p "$app_dir" \
+  && curl -Lo \
+  "${app_dir}/git-prompt.sh" \
+  'https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh'
+
+#===============================================================================
+# Install Zsh plugins
+#===============================================================================
+
+ARG app_id='zsh'
+ARG app_dir="${local_share_dir}/${app_id}"
+
+#===============================================================================
+# ## fzf-tab
+# Link: https://github.com/Aloxaf/fzf-tab
+#===============================================================================
+
+RUN git clone \
+  'https://github.com/Aloxaf/fzf-tab.git' \
+  "${app_dir}/fzf-tab"
+
+#===============================================================================
+# Install Tmux plugins
+#===============================================================================
+
+ARG app_id='tmux'
+ARG app_dir="${local_share_dir}/${app_id}"
+
+#===============================================================================
+# ## tmux-sensible
+# Link: https://github.com/tmux-plugins/tmux-sensible
+#===============================================================================
+
+RUN git clone \
+  'https://github.com/tmux-plugins/tmux-sensible' \
+  "${app_dir}/tmux-sensible"
+
+#===============================================================================
+# Change to the working directory
+#===============================================================================
+
+WORKDIR "${HOME}/${work_dir}"
+
+#===============================================================================
+# Runtime entrypoint
+#===============================================================================
+
+ENTRYPOINT ["/bin/zsh", "--login"]
