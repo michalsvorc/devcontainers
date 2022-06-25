@@ -33,7 +33,7 @@ readonly user_name='guest'
 readonly user_profile_default='https://github.com/michalsvorc/devcontainers-profile'
 
 # Registry
-readonly registry_host_default='example-registry.com'
+readonly registry_host_default='dockerhub.com'
 
 # Network
 readonly network='bridge'
@@ -63,13 +63,12 @@ Options:
                           ${env_nodejs}
                         Default: ${env_default}
 
-  -p, --user-profile <string>
+  -p, --user-profile <URL>
                         Git repository URL with user profile configuration files.
                         Used only during base environment build.
                         Default: ${user_profile_default}
 
   -t, --tag <string>    Set custom image tag.
-                        Default: ${image_tag_default}
 
 Commands:
   build                 Build an image.
