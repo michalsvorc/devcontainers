@@ -38,6 +38,7 @@ RUN apt-get update \
   procps \
   ripgrep \
   rsync \
+  tig \
   tmux \
   unzip \
   vim \
