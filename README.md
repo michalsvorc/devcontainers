@@ -43,6 +43,16 @@ Features:
 - [Node Version Manager](https://github.com/nvm-sh/nvm)
 - Node.js [LTS version](https://nodejs.org/en/about/releases/)
 
+### Python
+
+```console
+$ ./bin/docker.sh --env python build
+$ ./bin/docker.sh --env python run
+```
+
+Features:
+- [Python Version Manager](https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv)
+
 ## Volumes
 
 Persisted container directory reusable across multiple development containers.
