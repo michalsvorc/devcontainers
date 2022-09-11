@@ -23,6 +23,7 @@ readonly argv0=${0##*/}
 # Environments
 readonly env_base='base'
 readonly env_nodejs='nodejs'
+readonly env_python='python'
 readonly env_default="$env_base"
 
 # Image
@@ -61,6 +62,7 @@ Options:
                         Available values:
                           ${env_base}
                           ${env_nodejs}
+                          ${env_python}
                         Default: ${env_default}
 
   -p, --user-profile <URL>
@@ -201,7 +203,7 @@ while test $# -gt 0 ; do
       env="$1"
 
       case "${env:-}" in
-        "$env_base" | "$env_nodejs" )
+        "$env_base" | "$env_nodejs" | "$env_python" )
           ;;
         * )
           die "$(
