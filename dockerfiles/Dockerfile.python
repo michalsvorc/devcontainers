@@ -1,0 +1,79 @@
+#===============================================================================
+# Base image
+#===============================================================================
+
+FROM devcontainer:base
+
+#===============================================================================
+# Build arguments
+#===============================================================================
+
+ARG user_name
+
+#===============================================================================
+# # Simple Python Version Management (pyenv)
+#
+# Link: https://github.com/pyenv/pyenv
+#
+# ## Install pyenv dependencies
+#
+# Link: https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+#===============================================================================
+
+USER root
+
+RUN apt-get update \
+  && DEBIAN_FRONTEND=noninteractive \
+  apt-get install \
+  --assume-yes \
+  --no-install-recommends \
+  --quiet \
+  build-essential \
+  libssl-dev \
+  zlib1g-dev \
+  libbz2-dev \
+  libreadline-dev \
+  libsqlite3-dev \
+  wget \
+  curl \
+  llvm \
+  libncursesw5-dev \
+  xz-utils \
+  tk-dev \
+  libxml2-dev \
+  libxmlsec1-dev \
+  libffi-dev \
+  liblzma-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+#===============================================================================
+# Set user environment variables
+#===============================================================================
+
+ENV USER "$user_name"
+
+#===============================================================================
+# Set the non-root user
+#===============================================================================
+
+USER $USER
+
+#===============================================================================
+# ## Install pyenv
+#
+# Link: https://github.com/pyenv/pyenv#automatic-installer
+#===============================================================================
+
+RUN curl https://pyenv.run | bash \
+  && printf '%s\n%s\n%s\n%s\n' \
+  '# Python Version Manager' \
+  'export PYENV_ROOT="$HOME/.pyenv"' \
+  'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' \
+  'eval "$(pyenv init -)"' \
+  >> "${HOME}/.profile"
+
+#===============================================================================
+# Runtime entrypoint
+#===============================================================================
+
+ENTRYPOINT ["/bin/zsh", "--login"]
