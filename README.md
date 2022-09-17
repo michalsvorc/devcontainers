@@ -12,7 +12,6 @@ Docker development containers with basic CLI tools intended for development in i
 - [Zsh](https://www.zsh.org/) shell:
   - [syntax highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
   - [fzf completion](https://github.com/Aloxaf/fzf-tab)
-- Persistent [volumes](#volumes)
 - Customizable [user profiles](#user-profile)
 
 ## Usage
@@ -42,20 +41,6 @@ $ ./bin/docker.sh --env nodejs run
 Features:
 - [Node Version Manager](https://github.com/nvm-sh/nvm)
 - Node.js [LTS version](https://nodejs.org/en/about/releases/)
-
-## Volumes
-
-Persisted container directory reusable across multiple development containers.
-
-### devcontainer-local
-
-- Directory: `${HOME}/.local/`
-- Content: [user profile](#user-profile) configuration files, local executables
-
-### devcontainer-ssh
-
-- Directory: `${HOME}/.ssh/`
-- Content: SSH keys
 
 ## User profile
 

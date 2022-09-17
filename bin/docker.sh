@@ -148,10 +148,6 @@ docker_run() {
   local rest_args="$2"
   local image_handle=$(create_image_handle "$image_tag")
   local container_name="$(printf '%s' "${image_handle//[\/:]/-}")"
-  local volume_source_local="${image_name//[\/:]/-}-local"
-  local volume_destination_local="/home/guest/.local"
-  local volume_source_ssh="${image_name//[\/:]/-}-ssh"
-  local volume_destination_ssh="/home/guest/.ssh"
 
   docker_network_inspect
 
@@ -163,8 +159,6 @@ docker_run() {
     -it \
     --name "$container_name" \
     --network "$network" \
-    --mount "type=volume,source=${volume_source_local},destination=${volume_destination_local}" \
-    --mount "type=volume,source=${volume_source_ssh},destination=${volume_destination_ssh}" \
     ${rest_args} \
     "$image_handle"
 }
