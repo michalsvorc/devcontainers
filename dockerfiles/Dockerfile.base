@@ -32,7 +32,6 @@ RUN apt-get update \
   htop \
   jq \
   less \
-  mc \
   openssh-client \
   p7zip \
   procps \
