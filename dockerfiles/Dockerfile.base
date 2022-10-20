@@ -125,40 +125,6 @@ RUN git clone \
   "${app_dir}/fzf-tab"
 
 #===============================================================================
-# Install applications
-#
-## LF
-# Description: Terminal file manager.
-# Link: https://github.com/gokcehan/lf
-#===============================================================================
-
-ARG app_repository='https://raw.githubusercontent.com/michalsvorc/scripts/main/apps/lf.sh'
-
-RUN cd "$local_dir_bin" \
-  && curl \
-    "$app_repository" \
-    | bash
-
-#===============================================================================
-## Neovim
-# Description: Vim-fork focused on extensibility and usability.
-# Link: https://github.com/neovim/neovim
-#===============================================================================
-
-ARG app_id='nvim'
-ARG app_dir="${app_id}_app"
-ARG app_repository='https://raw.githubusercontent.com/michalsvorc/scripts/main/apps/nvim.sh'
-
-RUN cd "$local_dir_bin" \
-  && mkdir -p "$app_dir" \
-  && cd "$app_dir" \
-  && curl \
-    "$app_repository" \
-    | bash \
-  && cd .. \
-  && ln -s "${app_dir}/squashfs-root/AppRun" "$app_id"
-
-#===============================================================================
 # Change to the working directory
 #===============================================================================
 
