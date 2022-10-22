@@ -32,7 +32,6 @@ RUN apt-get update \
   htop \
   jq \
   less \
-  mc \
   openssh-client \
   p7zip \
   procps \
@@ -75,25 +74,25 @@ USER $USER
 
 ARG cache_dir="${HOME}/.cache"
 ARG local_dir="${HOME}/.local"
-ARG local_dir_bin="${local_dir}/bin"
-ARG local_dir_profile="${local_dir}/profile"
-ARG local_dir_share="${local_dir}/share"
+ARG local_bin_dir="${local_dir}/bin"
+ARG profile_dir="${local_dir}/profile"
+ARG share_dir="${local_dir}/share"
 ARG ssh_dir="${HOME}/.ssh"
 
 RUN mkdir -p \
   "$cache_dir" \
   "$local_dir" \
-  "$local_dir_bin" \
-  "$local_dir_profile" \
-  "$local_dir_share" \
+  "$local_bin_dir" \
+  "$profile_dir" \
+  "$share_dir" \
   "$ssh_dir"
 
 #===============================================================================
 # User profile configuration files
 #===============================================================================
 
-RUN git clone "$user_profile" "$local_dir_profile" \
-  && bash "${local_dir_profile}/init.sh"
+RUN git clone "$user_profile" "$profile_dir" \
+  && bash "${profile_dir}/init.sh"
 
 #===============================================================================
 # Install git prompt
@@ -101,7 +100,7 @@ RUN git clone "$user_profile" "$local_dir_profile" \
 #===============================================================================
 
 ARG app_id='git'
-ARG app_dir="${local_dir_share}/${app_id}"
+ARG app_dir="${share_dir}/${app_id}"
 
 RUN mkdir -p "$app_dir" \
   && curl -Lo \
@@ -113,32 +112,17 @@ RUN mkdir -p "$app_dir" \
 #===============================================================================
 
 ARG app_id='zsh'
-ARG app_dir="${local_dir_share}/${app_id}"
+
+ARG app_dir="${share_dir}/${app_id}"
 
 #===============================================================================
-# ## fzf-tab
+## fzf-tab
 # Link: https://github.com/Aloxaf/fzf-tab
 #===============================================================================
 
 RUN git clone \
   'https://github.com/Aloxaf/fzf-tab.git' \
   "${app_dir}/fzf-tab"
-
-#===============================================================================
-# Install Tmux plugins
-#===============================================================================
-
-ARG app_id='tmux'
-ARG app_dir="${local_dir_share}/${app_id}"
-
-#===============================================================================
-# ## tmux-sensible
-# Link: https://github.com/tmux-plugins/tmux-sensible
-#===============================================================================
-
-RUN git clone \
-  'https://github.com/tmux-plugins/tmux-sensible' \
-  "${app_dir}/tmux-sensible"
 
 #===============================================================================
 # Change to the working directory
