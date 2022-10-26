@@ -7,7 +7,7 @@ Docker development containers with basic CLI tools intended for development in i
 - `docker.sh` shell script for Docker commands automation
 - Debian slim images
 - Rootless containers
-- Containers are not removed after stopping
+- Containers are not removed after being stopped
 - [BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/) builds
 - [Zsh](https://www.zsh.org/) shell:
   - [syntax highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
@@ -17,7 +17,7 @@ Docker development containers with basic CLI tools intended for development in i
 ## Usage
 
 ```console
-$ ./bin/docker.sh --help
+$ ./scripts/docker.sh --help
 ```
 
 ## Environments
@@ -25,7 +25,7 @@ $ ./bin/docker.sh --help
 ### Base
 
 ```console
-$ ./bin/docker.sh build
+$ ./scripts/docker.sh build
 ```
 
 Base image must be built before building other environment. You can provide the Docker `--no-cache` flag after the
@@ -34,8 +34,8 @@ Base image must be built before building other environment. You can provide the 
 ### Node.js
 
 ```console
-$ ./bin/docker.sh --env nodejs build
-$ ./bin/docker.sh --env nodejs run
+$ ./scripts/docker.sh --env nodejs build
+$ ./scripts/docker.sh --env nodejs run
 ```
 
 Features:
@@ -53,17 +53,17 @@ Features:
 
 ## User profile
 
-User profile is as collection of user specific configuration files. Defaults to
-[https://github.com/michalsvorc/devcontainers-profile](https://github.com/michalsvorc/devcontainers-profile).
+User profile is as collection of user specific configuration files.
+
+Defaults to [devcontainers-profile](https://github.com/michalsvorc/devcontainers-profile).
 
 ### Custom user profile
 
-Specify custom user profile repository URL with `--user-profile` flag during the base image build.
+Specify custom user profile repository URL with `--user-profile` flag during the `base` image build.
 
 ```
-$ ./bin/docker.sh --user-profile <repository-url> build --no-cache
+$ ./scripts/docker.sh --env base --user-profile <repository-url> build --no-cache
 ```
 
-Custom user profile repository must implement `init.sh` shell script to create softlinks from `${HOME}/.local/profile`
-to `$HOME`.
+Custom user profile repository must implement [init.sh](https://github.com/michalsvorc/devcontainers-profile/blob/main/init.sh) shell script.
 
