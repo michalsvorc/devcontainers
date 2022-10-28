@@ -17,7 +17,7 @@ Docker development containers with basic CLI tools intended for development in i
 ## Usage
 
 ```console
-$ ./scripts/docker.sh --help
+./scripts/docker.sh --help
 ```
 
 ## Environments
@@ -25,7 +25,7 @@ $ ./scripts/docker.sh --help
 ### Base
 
 ```console
-$ ./scripts/docker.sh build
+./scripts/docker.sh build
 ```
 
 Base image must be built before building other environment. You can provide the Docker `--no-cache` flag after the
@@ -34,8 +34,8 @@ Base image must be built before building other environment. You can provide the 
 ### Node.js
 
 ```console
-$ ./scripts/docker.sh --env nodejs build
-$ ./scripts/docker.sh --env nodejs run
+./scripts/docker.sh --env nodejs build
+./scripts/docker.sh --env nodejs run
 ```
 
 Features:
@@ -62,7 +62,7 @@ Defaults to [devcontainers-profile](https://github.com/michalsvorc/devcontainers
 Specify custom user profile repository URL with `--user-profile` flag during the `base` image build.
 
 ```
-$ ./scripts/docker.sh --env base --user-profile <repository-url> build --no-cache
+./scripts/docker.sh --env base --user-profile <repository-url> build --no-cache
 ```
 
 Custom user profile repository must implement [init.sh](https://github.com/michalsvorc/devcontainers-profile/blob/main/init.sh) shell script.
