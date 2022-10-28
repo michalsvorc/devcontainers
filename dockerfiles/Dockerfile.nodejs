@@ -5,7 +5,8 @@
 FROM devcontainer:base
 
 #===============================================================================
-# Install Node Version Manager
+# Install Node Version Manager (NVM)
+#
 # Links:
 # - https://stackoverflow.com/questions/25899912/how-to-install-nvm-in-docker
 # - https://github.com/nvm-sh/nvm#install--update-script
