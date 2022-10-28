@@ -39,6 +39,7 @@ Base image must be built before building other environment. You can provide the 
 ```
 
 Features:
+- [Node.js LTS](https://nodejs.org/en/download/)
 - [Node Version Manager](https://github.com/nvm-sh/nvm)
 
 ### Python
@@ -49,6 +50,7 @@ $ ./bin/docker.sh --env python run
 ```
 
 Features:
+- [Python 3.10.x](https://www.python.org/downloads/)
 - [Python Version Manager](https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv)
 
 ## User profile
