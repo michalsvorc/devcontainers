@@ -35,6 +35,7 @@ RUN apt-get update \
   openssh-client \
   p7zip \
   procps \
+  python \
   ripgrep \
   rsync \
   tig \
