@@ -17,13 +17,14 @@ set -o pipefail     # Don't hide errors within pipes.
 # Variables
 #===============================================================================
 
-readonly version='1.6.0'
+readonly version='1.7.0'
 readonly argv0=${0##*/}
 
 # Environments
 readonly env_base='base'
 readonly env_nodejs='nodejs'
 readonly env_python='python'
+readonly env_golang='golang'
 readonly env_default="$env_base"
 
 # Image
@@ -63,6 +64,7 @@ Options:
                           ${env_base}
                           ${env_nodejs}
                           ${env_python}
+                          ${env_golang}
                         Default: ${env_default}
 
   -p, --user-profile <URL>
@@ -94,7 +96,7 @@ die() {
   usage 1 1>&2
 }
 
-version() {
+print_version() {
   printf '%s version: %s\n' "$argv0" "$version"
 }
 
@@ -187,7 +189,7 @@ while test $# -gt 0 ; do
       usage 0
       ;;
     --version )
-      version
+      print_version
       exit 0
       ;;
     -e | --env )
@@ -197,7 +199,7 @@ while test $# -gt 0 ; do
       env="$1"
 
       case "${env:-}" in
-        "$env_base" | "$env_nodejs" | "$env_python" )
+        "$env_base" | "$env_nodejs" | "$env_python" | "$env_golang" )
           ;;
         * )
           die "$(
