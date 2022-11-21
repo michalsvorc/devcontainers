@@ -53,6 +53,17 @@ Features:
 - [Python 3.10.x](https://www.python.org/downloads/)
 - [Python Version Manager](https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv)
 
+### Go
+
+```console
+$ ./bin/docker.sh --env golang build
+$ ./bin/docker.sh --env golang run
+```
+
+Features:
+- Version set in Dockerfile.golang
+- [Managing Go Installations](https://go.dev/doc/manage-install)
+
 ## User profile
 
 User profile is as collection of user specific configuration files.
