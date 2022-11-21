@@ -69,3 +69,13 @@ Specify custom user profile repository URL with `--user-profile` flag during the
 
 Custom user profile repository must implement [init.sh](https://github.com/michalsvorc/devcontainers-profile/blob/main/init.sh) shell script.
 
+## Troubleshooting
+
+### Apple M1 MacBook
+
+If you encounter issues with missing libraries, add `--platform linux/x86_64` flag after native docker commands:
+
+```console
+$ ./bin/docker.sh --env <environment> build --platform linux/x86_64
+$ ./bin/docker.sh --env <environment> run --platform linux/x86_64
+```
