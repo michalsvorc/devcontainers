@@ -22,21 +22,46 @@ Docker development containers with basic CLI tools intended for development in i
 
 ## Environments
 
-### Base
+Every environment is based on `base` image. The `base` image must be built prior to building any other environment:
 
 ```console
 ./scripts/docker.sh build
 ```
 
-Base image must be built before building other environment. You can provide the Docker `--no-cache` flag after the
-`build` command to rebuild images with updated system packages.
+Build a specific environment image:
+
+```console
+./scripts/docker.sh --env <environment_id> build
+```
+
+Run environment container:
+
+```console
+./scripts/docker.sh --env <environment_id> run
+```
+
+Example:
+
+```console
+./scripts/docker.sh --env python build
+./scripts/docker.sh --env python run
+```
+
+### Base
+
+Environment id: `base`
+
+To update system packages in existing `base` image, use Docker `--no-cache` flag:
+
+```console
+./scripts/docker.sh build --no-cache
+```
+
+You must rebuild environment images and create new containers as well.
 
 ### Node.js
 
-```console
-./scripts/docker.sh --env nodejs build
-./scripts/docker.sh --env nodejs run
-```
+Environment id: `nodejs`
 
 Features:
 - [Node.js LTS](https://nodejs.org/en/download/)
@@ -44,10 +69,7 @@ Features:
 
 ### Python
 
-```console
-$ ./bin/docker.sh --env python build
-$ ./bin/docker.sh --env python run
-```
+Environment id: `python`
 
 Features:
 - [Python 3.10.x](https://www.python.org/downloads/)
@@ -55,10 +77,7 @@ Features:
 
 ### Go
 
-```console
-$ ./bin/docker.sh --env golang build
-$ ./bin/docker.sh --env golang run
-```
+Environment id: `golang`
 
 Features:
 - Version set in Dockerfile.golang
@@ -74,7 +93,7 @@ Defaults to [devcontainers-profile](https://github.com/michalsvorc/devcontainers
 
 Specify custom user profile repository URL with `--user-profile` flag during the `base` image build.
 
-```
+```console
 ./scripts/docker.sh --env base --user-profile <repository-url> build --no-cache
 ```
 
