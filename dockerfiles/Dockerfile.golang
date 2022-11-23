@@ -36,7 +36,12 @@ RUN curl -JLO "https://go.dev/dl/${go_tarfile}" \
   && tar -C "$share_dir" -xzf "$go_tarfile" \
   && rm "$go_tarfile" \
   && ln -sfn "${share_dir}/go/bin/go" "${bin_dir}/go" \
-  && ln -sfn "${share_dir}/go/bin/gofmt" "${bin_dir}/gofmt"
+  && ln -sfn "${share_dir}/go/bin/gofmt" "${bin_dir}/gofmt" \
+  && printf '%s\nexport PATH="%s:${PATH}"\n' \
+  '# Add Go binary to PATH' \
+  "$(${bin_dir}/go env GOPATH)/bin/" \
+  >> "${HOME}/.profile"
+
 
 #===============================================================================
 # Runtime entrypoint
