@@ -43,7 +43,6 @@ RUN apt-get update \
   unzip \
   vim \
   zsh \
-  zsh-syntax-highlighting \
   && rm -rf /var/lib/apt/lists/*
 
 #===============================================================================
