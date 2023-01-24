@@ -91,7 +91,7 @@ RUN mkdir -p \
 # User profile configuration files
 #===============================================================================
 
-RUN git clone "$user_profile" "$profile_dir" \
+RUN git clone --recurse-submodules "$user_profile" "$profile_dir" \
   && bash "${profile_dir}/init.sh"
 
 #===============================================================================
