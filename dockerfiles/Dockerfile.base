@@ -22,6 +22,7 @@ RUN apt-get update \
   --assume-yes \
   --no-install-recommends \
   --quiet \
+  bat \
   ca-certificates \
   curl \
   exa \
@@ -31,6 +32,7 @@ RUN apt-get update \
   htop \
   jq \
   less \
+  nnn \
   openssh-client \
   p7zip \
   procps \
