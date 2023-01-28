@@ -12,6 +12,7 @@ ARG shell='/bin/zsh'
 ARG user_name
 ARG user_profile
 ARG gh_release_download='https://raw.githubusercontent.com/michalsvorc/scripts/main/gh_release_download.sh'
+ARG scripts_repository='https://github.com/michalsvorc/scripts'
 
 #===============================================================================
 # Update package repositories and install new packages
@@ -37,9 +38,9 @@ RUN apt-get update \
   openssh-client \
   p7zip \
   procps \
+  pwgen \
   ripgrep \
   rsync \
-  tig \
   tmux \
   unzip \
   vim \
@@ -98,11 +99,24 @@ SHELL ["/bin/bash", "-c"]
 # User profile configuration files
 #===============================================================================
 
-RUN git clone --recurse-submodules "$user_profile" "$profile_dir" \
-  && bash "${profile_dir}/init.sh"
+RUN git clone \
+  --recurse-submodules \
+  --single-branch \
+  --branch 'main' \
+  "$user_profile" "$profile_dir" \
+  && bash "${profile_dir}/scripts/init.sh"
 
 #===============================================================================
-# Download Neovim binary
+# Helper scripts
+#===============================================================================
+
+RUN git clone \
+  --single-branch \
+  --branch 'main' \
+  "$scripts_repository" "${HOME}/scripts"
+
+#===============================================================================
+# Neovim binary
 # Link: https://github.com/neovim/neovim/releases
 #===============================================================================
 
@@ -117,7 +131,7 @@ RUN cd ${share_dir} \
   && cd -
 
 #===============================================================================
-# Download Lazygit binary
+# Lazygit binary
 # Link: https://github.com/jesseduffield/lazygit/releases
 #===============================================================================
 
@@ -133,7 +147,7 @@ RUN mkdir -p "${share_dir}/${app_id}/bin" \
   && cd -
 
 #===============================================================================
-# Download delta binary
+# Delta binary
 # Link: https://github.com/dandavison/delta/releases
 #===============================================================================
 

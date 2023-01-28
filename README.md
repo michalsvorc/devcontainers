@@ -1,18 +1,14 @@
 # Development containers
 
-Docker development containers with basic CLI tools intended for development in isolation.
+Docker development containers with my [profile](https://github.com/michalsvorc/profile) configuration.
 
 ## Features
 
 - `docker.sh` shell script for Docker commands automation
 - Debian slim images
 - Rootless containers
-- Containers are not removed after being stopped
 - [BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/) builds
-- [Zsh](https://www.zsh.org/) shell:
-  - [syntax highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-  - [fzf completion](https://github.com/Aloxaf/fzf-tab)
-- Customizable [user profiles](#user-profile)
+- [Zsh](https://www.zsh.org/) shell
 
 ## Usage
 
@@ -65,7 +61,7 @@ Environment id: `nodejs`
 
 Features:
 - [Node.js LTS](https://nodejs.org/en/download/)
-- [Node Version Manager](https://github.com/nvm-sh/nvm)
+- [fnm](https://github.com/Schniz/fnm#readme)
 
 ### Python
 
@@ -82,22 +78,6 @@ Environment id: `golang`
 Features:
 - Version set in Dockerfile.golang
 - [Managing Go Installations](https://go.dev/doc/manage-install)
-
-## User profile
-
-User profile is as collection of user specific configuration files.
-
-Defaults to [devcontainers-profile](https://github.com/michalsvorc/devcontainers-profile).
-
-### Custom user profile
-
-Specify custom user profile repository URL with `--user-profile` flag during the `base` image build.
-
-```console
-./scripts/docker.sh --env base --user-profile <repository-url> build --no-cache
-```
-
-Custom user profile repository must implement [init.sh](https://github.com/michalsvorc/devcontainers-profile/blob/main/init.sh) shell script.
 
 ## Troubleshooting
 
