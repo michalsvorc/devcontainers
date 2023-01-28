@@ -16,6 +16,14 @@ Docker development containers with my [profile](https://github.com/michalsvorc/p
 ./scripts/docker.sh --help
 ```
 
+## Container networking
+
+Find container IP address:
+
+```
+docker network inspect bridge | jq '.[].Containers'
+```
+
 ## Environments
 
 Every environment is based on `base` image. The `base` image must be built prior to building any other environment:
