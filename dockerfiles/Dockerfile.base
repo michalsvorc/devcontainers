@@ -103,7 +103,7 @@ RUN git clone \
   --recurse-submodules \
   --single-branch \
   --branch 'main' \
-  "$user_profile" "$profile_dir" \
+  "https://github.com/$user_profile" "$profile_dir" \
   && bash "${profile_dir}/scripts/init.sh"
 
 #===============================================================================

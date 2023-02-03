@@ -18,7 +18,7 @@ set -o pipefail     # Don't hide errors within pipes.
 # Variables
 #===============================================================================
 
-readonly version='1.8.0'
+readonly version='1.8.1'
 readonly argv0=${0##*/}
 
 # Environments
@@ -33,7 +33,7 @@ readonly image_name='devcontainer'
 
 # User
 readonly user_name='guest'
-readonly user_profile='https://github.com/michalsvorc/profile'
+readonly user_profile='michalsvorc/profile'
 
 # Registry
 readonly registry_host_default='dockerhub.com'
