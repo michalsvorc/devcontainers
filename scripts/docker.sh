@@ -18,7 +18,7 @@ set -o pipefail     # Don't hide errors within pipes.
 # Variables
 #===============================================================================
 
-readonly version='1.8.1'
+readonly version='1.9.0'
 readonly argv0=${0##*/}
 
 # Environments
@@ -157,6 +157,7 @@ docker_run() {
     -it \
     --name "$container_name" \
     --network "$network" \
+    --init \
     ${rest_args} \
     "$image_handle"
 }
