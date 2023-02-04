@@ -24,7 +24,6 @@ RUN apt-get update \
   --assume-yes \
   --no-install-recommends \
   --quiet \
-  bat \
   ca-certificates \
   curl \
   exa \
@@ -166,7 +165,22 @@ RUN mkdir -p "${share_dir}/${app_id}/bin" \
   && cd -
 
 #===============================================================================
+# bat binary
+# Link: https://github.com/sharkdp/bat
 #===============================================================================
+
+ARG app_id='bat'
+ARG repository='sharkdp/bat'
+ARG asset='bat-v([0-9]{1,}\.)+[0-9]{1,}-x86_64-unknown-linux-gnu.tar.gz$'
+ARG tag='v0.22.1'
+
+RUN mkdir -p "${share_dir}/${app_id}/bin" \
+  && cd "${share_dir}/${app_id}" \
+  && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
+  | tar -xz --directory 'bin' --strip-components 1 \
+  && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
+  && cd -
+
 # Change working directory
 #===============================================================================
 
