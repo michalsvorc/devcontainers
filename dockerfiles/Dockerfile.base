@@ -123,9 +123,10 @@ RUN git clone \
 ARG app_id='nvim'
 ARG repository='neovim/neovim'
 ARG asset='nvim-linux64.tar.gz$'
+ARG tag='nightly'
 
 RUN cd ${share_dir} \
-  && bash <(curl -Ls "$gh_release_download") "$repository" "$asset" \
+  && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
   | tar -xz \
   && ln -sf "${share_dir}/nvim-linux64/bin/${app_id}" "${bin_dir}/${app_id}" \
   && cd -
@@ -138,10 +139,11 @@ RUN cd ${share_dir} \
 ARG app_id='lazygit'
 ARG repository='jesseduffield/lazygit'
 ARG asset='lazygit_([0-9]{1,}\.)+[0-9]{1,}_Linux_x86_64.tar.gz$'
+ARG tag='v0.37.0'
 
 RUN mkdir -p "${share_dir}/${app_id}/bin" \
   && cd "${share_dir}/${app_id}" \
-  && bash <(curl -Ls "$gh_release_download") "$repository" "$asset" \
+  && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
   | tar -xz --directory 'bin' \
   && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
   && cd -
@@ -154,14 +156,16 @@ RUN mkdir -p "${share_dir}/${app_id}/bin" \
 ARG app_id='delta'
 ARG repository='dandavison/delta'
 ARG asset='delta-([0-9]{1,}\.)+[0-9]{1,}-x86_64-unknown-linux-gnu.tar.gz$'
+ARG tag='0.15.1'
 
 RUN mkdir -p "${share_dir}/${app_id}/bin" \
   && cd "${share_dir}/${app_id}" \
-  && bash <(curl -Ls "$gh_release_download") "$repository" "$asset" \
+  && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
   | tar -xz --directory 'bin' --strip-components 1 \
   && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
   && cd -
 
+#===============================================================================
 #===============================================================================
 # Change working directory
 #===============================================================================
