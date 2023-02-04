@@ -8,13 +8,13 @@ FROM devcontainer:base
 # Fast Node Manager (fnm)
 #===============================================================================
 
-RUN curl -fsSL https://fnm.vercel.app/install | bash
+RUN curl -fsSL 'https://fnm.vercel.app/install' | bash
 
 #===============================================================================
 # Node.js LTS version
 #===============================================================================
 
-ARG fnm_bin='/home/guest/.local/share/fnm/fnm'
+ARG fnm_bin="${HOME}/.local/share/fnm/fnm"
 
 RUN "$fnm_bin" install --lts
 
