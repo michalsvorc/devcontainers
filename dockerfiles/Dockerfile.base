@@ -33,7 +33,6 @@ RUN apt-get update \
   htop \
   jq \
   less \
-  nnn \
   openssh-client \
   p7zip \
   procps \
@@ -181,6 +180,24 @@ RUN mkdir -p "${share_dir}/${app_id}/bin" \
   && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
   && cd -
 
+#===============================================================================
+# nnn binary
+# Link: https://github.com/jarun/nnn
+#===============================================================================
+
+ARG app_id='nnn'
+ARG repository='jarun/nnn'
+ARG asset='nnn-static-([0-9]{1,}\.)+[0-9]{1,}.x86_64.tar.gz$'
+ARG tag='v4.7'
+
+RUN mkdir -p "${share_dir}/${app_id}/bin" \
+  && cd "${share_dir}/${app_id}" \
+  && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
+  | tar -xz --directory 'bin' \
+  && ln -sf "${share_dir}/${app_id}/bin/nnn-static" "${bin_dir}/${app_id}" \
+  && cd -
+
+#===============================================================================
 # Change working directory
 #===============================================================================
 
