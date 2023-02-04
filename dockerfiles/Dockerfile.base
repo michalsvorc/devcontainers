@@ -101,7 +101,7 @@ SHELL ["/bin/bash", "-c"]
 
 RUN git clone \
   --recurse-submodules \
-  --single-branch \
+  --depth 1 \
   --branch 'main' \
   "https://github.com/$user_profile" "$profile_dir" \
   && bash "${profile_dir}/scripts/init.sh"
@@ -111,7 +111,7 @@ RUN git clone \
 #===============================================================================
 
 RUN git clone \
-  --single-branch \
+  --depth 1 \
   --branch 'main' \
   "$scripts_repository" "${HOME}/scripts"
 
