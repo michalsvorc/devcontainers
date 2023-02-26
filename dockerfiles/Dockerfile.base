@@ -36,6 +36,7 @@ RUN apt-get update \
   htop \
   jq \
   less \
+  nnn \
   openssh-client \
   p7zip \
   procps \
@@ -62,6 +63,21 @@ SHELL ["/bin/bash", "-c"]
 RUN ln -s /usr/bin/batcat /usr/local/bin/bat
 
 #===============================================================================
+# Neovim binary
+# Link: https://github.com/neovim/neovim
+#===============================================================================
+
+ARG app_id='nvim'
+ARG repository='neovim/neovim'
+ARG asset='nvim-linux64.deb$'
+ARG tag='nightly'
+
+RUN bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" > \
+  "/tmp/${app_id}.deb" \
+  && apt install "/tmp/${app_id}.deb" \
+  && rm $_
+
+#===============================================================================
 # Delta binary
 # Link: https://github.com/dandavison/delta
 #===============================================================================
@@ -75,6 +91,29 @@ RUN bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" > \
   "/tmp/${app_id}.deb" \
   && apt install "/tmp/${app_id}.deb" \
   && rm $_
+
+#===============================================================================
+# Lazygit binary
+# Link: https://github.com/jesseduffield/lazygit
+#===============================================================================
+
+ARG app_id='lazygit'
+ARG repository='jesseduffield/lazygit'
+ARG asset="lazygit_([0-9]{1,}\.)+[0-9]{1,}_${TARGETARCH}.tar.gz$"
+ARG tag='v0.37.0'
+
+RUN mkdir -p "/opt/${app_id}/bin" \
+  && cd "/opt/${app_id}" \
+  && if [[ "$TARGETARCH" == 'amd64' ]]; then \
+    bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" \
+    'lazygit_([0-9]{1,}\.)+[0-9]{1,}_Linux_x86_64.tar.gz$' \
+    | tar -xz --directory 'bin'; \
+  else \
+    bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
+    | tar -xz --directory 'bin'; \
+  fi \
+  && ln -sf "/opt/${app_id}/bin/${app_id}" "/usr/local/bin/${app_id}" \
+  && cd -
 
 #===============================================================================
 # Set up a non-root user
@@ -118,12 +157,12 @@ RUN mkdir -p \
   "$share_dir" \
   "$ssh_dir"
 
-
 #===============================================================================
 # User profile configuration files
 #===============================================================================
 
 RUN git clone \
+  --recurse-submodules \
   --depth 1 \
   --branch 'main' \
   "https://github.com/$user_profile" "$profile_dir" \
@@ -137,74 +176,6 @@ RUN git clone \
   --depth 1 \
   --branch 'main' \
   "$scripts_repository" "${HOME}/scripts"
-
-#===============================================================================
-# Neovim binary
-# Link: https://github.com/neovim/neovim
-#===============================================================================
-
-# ARG app_id='nvim'
-# ARG repository='neovim/neovim'
-# ARG asset='nvim-linux64.tar.gz$'
-# ARG tag='nightly'
-#
-# RUN cd ${share_dir} \
-#   && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
-#   | tar -xz \
-#   && ln -sf "${share_dir}/nvim-linux64/bin/${app_id}" "${bin_dir}/${app_id}" \
-#   && cd -
-
-#===============================================================================
-# Lazygit binary
-# Link: https://github.com/jesseduffield/lazygit
-#===============================================================================
-
-# ARG app_id='lazygit'
-# ARG repository='jesseduffield/lazygit'
-# ARG asset='lazygit_([0-9]{1,}\.)+[0-9]{1,}_Linux_x86_64.tar.gz$'
-# ARG tag='v0.37.0'
-#
-# RUN mkdir -p "${share_dir}/${app_id}/bin" \
-#   && cd "${share_dir}/${app_id}" \
-#   && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
-#   | tar -xz --directory 'bin' \
-#   && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
-#   && cd -
-
-
-#===============================================================================
-# bat binary
-# Link: https://github.com/sharkdp/bat
-#===============================================================================
-
-ARG app_id='bat'
-ARG repository='sharkdp/bat'
-ARG asset='bat-v([0-9]{1,}\.)+[0-9]{1,}-x86_64-unknown-linux-gnu.tar.gz$'
-ARG tag='v0.22.1'
-
-RUN mkdir -p "${share_dir}/${app_id}/bin" \
-  && cd "${share_dir}/${app_id}" \
-  && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
-  | tar -xz --directory 'bin' --strip-components 1 \
-  && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
-  && cd -
-
-#===============================================================================
-# nnn binary
-# Link: https://github.com/jarun/nnn
-#===============================================================================
-
-# ARG app_id='nnn'
-# ARG repository='jarun/nnn'
-# ARG asset='nnn-static-([0-9]{1,}\.)+[0-9]{1,}.x86_64.tar.gz$'
-# ARG tag='v4.7'
-#
-# RUN mkdir -p "${share_dir}/${app_id}/bin" \
-#   && cd "${share_dir}/${app_id}" \
-#   && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
-#   | tar -xz --directory 'bin' \
-#   && ln -sf "${share_dir}/${app_id}/bin/nnn-static" "${bin_dir}/${app_id}" \
-#   && cd -
 
 #===============================================================================
 # Change working directory
