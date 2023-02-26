@@ -98,7 +98,6 @@ SHELL ["/bin/bash", "-c"]
 #===============================================================================
 
 RUN git clone \
-  --recurse-submodules \
   --depth 1 \
   --branch 'main' \
   "https://github.com/$user_profile" "$profile_dir" \
@@ -118,50 +117,38 @@ RUN git clone \
 # Link: https://github.com/neovim/neovim
 #===============================================================================
 
-ARG app_id='nvim'
-ARG repository='neovim/neovim'
-ARG asset='nvim-linux64.tar.gz$'
-ARG tag='nightly'
-
-RUN cd ${share_dir} \
-  && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
-  | tar -xz \
-  && ln -sf "${share_dir}/nvim-linux64/bin/${app_id}" "${bin_dir}/${app_id}" \
-  && cd -
+# ARG app_id='nvim'
+# ARG repository='neovim/neovim'
+# ARG asset='nvim-linux64.tar.gz$'
+# ARG tag='nightly'
+#
+# RUN cd ${share_dir} \
+#   && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
+#   | tar -xz \
+#   && ln -sf "${share_dir}/nvim-linux64/bin/${app_id}" "${bin_dir}/${app_id}" \
+#   && cd -
 
 #===============================================================================
 # Lazygit binary
 # Link: https://github.com/jesseduffield/lazygit
 #===============================================================================
 
-ARG app_id='lazygit'
-ARG repository='jesseduffield/lazygit'
-ARG asset='lazygit_([0-9]{1,}\.)+[0-9]{1,}_Linux_x86_64.tar.gz$'
-ARG tag='v0.37.0'
-
-RUN mkdir -p "${share_dir}/${app_id}/bin" \
-  && cd "${share_dir}/${app_id}" \
-  && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
-  | tar -xz --directory 'bin' \
-  && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
-  && cd -
+# ARG app_id='lazygit'
+# ARG repository='jesseduffield/lazygit'
+# ARG asset='lazygit_([0-9]{1,}\.)+[0-9]{1,}_Linux_x86_64.tar.gz$'
+# ARG tag='v0.37.0'
+#
+# RUN mkdir -p "${share_dir}/${app_id}/bin" \
+#   && cd "${share_dir}/${app_id}" \
+#   && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
+#   | tar -xz --directory 'bin' \
+#   && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
+#   && cd -
 
 #===============================================================================
 # Delta binary
 # Link: https://github.com/dandavison/delta
 #===============================================================================
-
-ARG app_id='delta'
-ARG repository='dandavison/delta'
-ARG asset='delta-([0-9]{1,}\.)+[0-9]{1,}-x86_64-unknown-linux-gnu.tar.gz$'
-ARG tag='0.15.1'
-
-RUN mkdir -p "${share_dir}/${app_id}/bin" \
-  && cd "${share_dir}/${app_id}" \
-  && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
-  | tar -xz --directory 'bin' --strip-components 1 \
-  && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
-  && cd -
 
 #===============================================================================
 # bat binary
@@ -179,23 +166,34 @@ RUN mkdir -p "${share_dir}/${app_id}/bin" \
   | tar -xz --directory 'bin' --strip-components 1 \
   && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
   && cd -
+# ARG app_id='delta'
+# ARG repository='dandavison/delta'
+# ARG asset='delta-([0-9]{1,}\.)+[0-9]{1,}-x86_64-unknown-linux-gnu.tar.gz$'
+# ARG tag='0.15.1'
+#
+# RUN mkdir -p "${share_dir}/${app_id}/bin" \
+#   && cd "${share_dir}/${app_id}" \
+#   && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
+#   | tar -xz --directory 'bin' --strip-components 1 \
+#   && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
+#   && cd -
 
 #===============================================================================
 # nnn binary
 # Link: https://github.com/jarun/nnn
 #===============================================================================
 
-ARG app_id='nnn'
-ARG repository='jarun/nnn'
-ARG asset='nnn-static-([0-9]{1,}\.)+[0-9]{1,}.x86_64.tar.gz$'
-ARG tag='v4.7'
-
-RUN mkdir -p "${share_dir}/${app_id}/bin" \
-  && cd "${share_dir}/${app_id}" \
-  && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
-  | tar -xz --directory 'bin' \
-  && ln -sf "${share_dir}/${app_id}/bin/nnn-static" "${bin_dir}/${app_id}" \
-  && cd -
+# ARG app_id='nnn'
+# ARG repository='jarun/nnn'
+# ARG asset='nnn-static-([0-9]{1,}\.)+[0-9]{1,}.x86_64.tar.gz$'
+# ARG tag='v4.7'
+#
+# RUN mkdir -p "${share_dir}/${app_id}/bin" \
+#   && cd "${share_dir}/${app_id}" \
+#   && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
+#   | tar -xz --directory 'bin' \
+#   && ln -sf "${share_dir}/${app_id}/bin/nnn-static" "${bin_dir}/${app_id}" \
+#   && cd -
 
 #===============================================================================
 # Change working directory
