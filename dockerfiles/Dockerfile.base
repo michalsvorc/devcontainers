@@ -71,8 +71,6 @@ ARG repository='dandavison/delta'
 ARG asset="git-delta_([0-9]{1,}\.)+[0-9]{1,}_${TARGETARCH}.deb$"
 ARG tag='0.15.1'
 
-RUN echo "DELTA ASSET: ${asset}"
-
 RUN bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" > \
   "/tmp/${app_id}.deb" \
   && apt install "/tmp/${app_id}.deb" \
