@@ -99,7 +99,7 @@ RUN bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" > \
 
 ARG app_id='lazygit'
 ARG repository='jesseduffield/lazygit'
-ARG asset="lazygit_([0-9]{1,}\.)+[0-9]{1,}_${TARGETARCH}.tar.gz$"
+ARG asset="lazygit_([0-9]{1,}\.)+[0-9]{1,}_Linux_${TARGETARCH}.tar.gz$"
 ARG tag='v0.37.0'
 
 RUN mkdir -p "/opt/${app_id}/bin" \
