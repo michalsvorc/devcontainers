@@ -8,6 +8,8 @@ FROM debian:bookworm-slim
 # Build arguments
 #===============================================================================
 
+ARG TARGETARCH
+
 ARG shell='/bin/zsh'
 ARG user_name
 ARG user_profile
@@ -45,6 +47,36 @@ RUN apt-get update \
   vim \
   zsh \
   && rm -rf /var/lib/apt/lists/*
+
+#===============================================================================
+# Use Bash for executing Docker commands
+#===============================================================================
+
+SHELL ["/bin/bash", "-c"]
+
+#===============================================================================
+# Set up batcat as bat
+# https://github.com/sharkdp/bat#on-ubuntu-using-apt
+#===============================================================================
+
+RUN ln -s /usr/bin/batcat /usr/local/bin/bat
+
+#===============================================================================
+# Delta binary
+# Link: https://github.com/dandavison/delta
+#===============================================================================
+
+ARG app_id='delta'
+ARG repository='dandavison/delta'
+ARG asset="git-delta_([0-9]{1,}\.)+[0-9]{1,}_${TARGETARCH}.deb$"
+ARG tag='0.15.1'
+
+RUN echo "DELTA ASSET: ${asset}"
+
+RUN bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" > \
+  "/tmp/${app_id}.deb" \
+  && apt install "/tmp/${app_id}.deb" \
+  && rm $_
 
 #===============================================================================
 # Set up a non-root user
@@ -88,11 +120,6 @@ RUN mkdir -p \
   "$share_dir" \
   "$ssh_dir"
 
-#===============================================================================
-# Use Bash for executing Docker commands
-#===============================================================================
-
-SHELL ["/bin/bash", "-c"]
 
 #===============================================================================
 # User profile configuration files
@@ -146,10 +173,6 @@ RUN git clone \
 #   && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
 #   && cd -
 
-#===============================================================================
-# Delta binary
-# Link: https://github.com/dandavison/delta
-#===============================================================================
 
 #===============================================================================
 # bat binary
@@ -167,17 +190,6 @@ RUN mkdir -p "${share_dir}/${app_id}/bin" \
   | tar -xz --directory 'bin' --strip-components 1 \
   && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
   && cd -
-# ARG app_id='delta'
-# ARG repository='dandavison/delta'
-# ARG asset='delta-([0-9]{1,}\.)+[0-9]{1,}-x86_64-unknown-linux-gnu.tar.gz$'
-# ARG tag='0.15.1'
-#
-# RUN mkdir -p "${share_dir}/${app_id}/bin" \
-#   && cd "${share_dir}/${app_id}" \
-#   && bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
-#   | tar -xz --directory 'bin' --strip-components 1 \
-#   && ln -sf "${share_dir}/${app_id}/bin/${app_id}" "${bin_dir}/${app_id}" \
-#   && cd -
 
 #===============================================================================
 # nnn binary
