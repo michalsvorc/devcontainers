@@ -24,6 +24,7 @@ RUN apt-get update \
   --assume-yes \
   --no-install-recommends \
   --quiet \
+  bat \
   ca-certificates \
   curl \
   exa \
