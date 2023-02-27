@@ -1,8 +1,52 @@
 #===============================================================================
+# Builder image
+#===============================================================================
+
+FROM debian:bookworm-slim AS builder
+
+RUN apt-get update \
+  && DEBIAN_FRONTEND=noninteractive \
+  apt-get install \
+    --assume-yes \
+    --no-install-recommends \
+    --quiet \
+    ca-certificates \
+    cmake \
+    curl \
+    g++ \
+    gettext \
+    git \
+    libtool-bin \
+    make \
+    ninja-build \
+    pkg-config \
+    unzip
+
+#===============================================================================
+# Use Bash for executing Docker commands
+#===============================================================================
+
+SHELL ["/bin/bash", "-c"]
+
+#===============================================================================
+# Neovim binary
+# Link: https://github.com/neovim/neovim
+#===============================================================================
+
+ARG tag='stable'
+
+RUN cd /opt \
+  && curl -L "https://github.com/neovim/neovim/archive/refs/tags/${tag}.tar.gz" \
+    | tar -xz \
+  && cd "/opt/neovim-${tag}" \
+  && make CMAKE_BUILD_TYPE=Release \
+  && make install
+
+#===============================================================================
 # Base image
 #===============================================================================
 
-FROM debian:bookworm-slim
+FROM debian:bookworm-slim AS base
 
 #===============================================================================
 # Build arguments
@@ -23,30 +67,30 @@ ARG scripts_repository='https://github.com/michalsvorc/scripts'
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive \
   apt-get install \
-  --assume-yes \
-  --no-install-recommends \
-  --quiet \
-  bat \
-  ca-certificates \
-  curl \
-  exa \
-  fzf \
-  g++ \
-  git \
-  htop \
-  jq \
-  less \
-  nnn \
-  openssh-client \
-  p7zip \
-  procps \
-  pwgen \
-  ripgrep \
-  rsync \
-  tmux \
-  unzip \
-  vim \
-  zsh \
+    --assume-yes \
+    --no-install-recommends \
+    --quiet \
+    bat \
+    ca-certificates \
+    curl \
+    exa \
+    fzf \
+    g++ \
+    git \
+    htop \
+    jq \
+    less \
+    nnn \
+    openssh-client \
+    p7zip \
+    procps \
+    pwgen \
+    ripgrep \
+    rsync \
+    tmux \
+    unzip \
+    vim \
+    zsh \
   && rm -rf /var/lib/apt/lists/*
 
 #===============================================================================
@@ -63,19 +107,11 @@ SHELL ["/bin/bash", "-c"]
 RUN ln -s /usr/bin/batcat /usr/local/bin/bat
 
 #===============================================================================
-# Neovim binary
-# Link: https://github.com/neovim/neovim
+# Copy neovim binary from builder stage
 #===============================================================================
 
-ARG app_id='nvim'
-ARG repository='neovim/neovim'
-ARG asset='nvim-linux64.deb$'
-ARG tag='nightly'
-
-RUN bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" > \
-  "/tmp/${app_id}.deb" \
-  && apt install "/tmp/${app_id}.deb" \
-  && rm $_
+COPY --from=builder /usr/local/bin/nvim /usr/local/bin/nvim
+COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
 
 #===============================================================================
 # Delta binary
@@ -88,7 +124,7 @@ ARG asset="git-delta_([0-9]{1,}\.)+[0-9]{1,}_${TARGETARCH}.deb$"
 ARG tag='0.15.1'
 
 RUN bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" > \
-  "/tmp/${app_id}.deb" \
+    "/tmp/${app_id}.deb" \
   && apt install "/tmp/${app_id}.deb" \
   && rm $_
 
