@@ -8,6 +8,7 @@ FROM debian:bookworm-slim AS builder
 # Build arguments
 #===============================================================================
 
+ARG TARGETARCH
 ARG GOPATH='/opt/go'
 
 #===============================================================================
@@ -69,6 +70,19 @@ RUN cd /tmp \
   && go install
 
 #===============================================================================
+# Delta binary
+# Link: https://github.com/dandavison/delta
+#===============================================================================
+
+ARG tag='0.15.1'
+ARG repository='dandavison/delta'
+
+RUN curl -L "https://github.com/${repository}/releases/download/${tag}/git-delta_${tag}_${TARGETARCH}.deb" \
+    -o "/tmp/delta-${tag}.deb" \
+  && apt install $_ \
+  && rm $_
+
+#===============================================================================
 # Base image
 #===============================================================================
 
@@ -78,12 +92,9 @@ FROM debian:bookworm-slim AS base
 # Build arguments
 #===============================================================================
 
-ARG TARGETARCH
-
 ARG shell='/bin/zsh'
 ARG user_name
 ARG user_profile
-ARG gh_release_download='https://raw.githubusercontent.com/michalsvorc/scripts/main/gh_release_download.sh'
 ARG scripts_repository='https://github.com/michalsvorc/scripts'
 
 #===============================================================================
@@ -133,32 +144,13 @@ SHELL ["/bin/bash", "-c"]
 RUN ln -s /usr/bin/batcat /usr/local/bin/bat
 
 #===============================================================================
-# Copy neovim binary from builder stage
+# Copy compiled binaries from builder stage
 #===============================================================================
 
 COPY --from=builder /usr/local/bin/nvim /usr/local/bin/nvim
 COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
-
-#===============================================================================
-# Copy lazygit binary from builder stage
-#===============================================================================
-
 COPY --from=builder /opt/go/bin/lazygit /usr/local/bin/lazygit
-
-#===============================================================================
-# Delta binary
-# Link: https://github.com/dandavison/delta
-#===============================================================================
-
-ARG app_id='delta'
-ARG repository='dandavison/delta'
-ARG asset="git-delta_([0-9]{1,}\.)+[0-9]{1,}_${TARGETARCH}.deb$"
-ARG tag='0.15.1'
-
-RUN bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" > \
-    "/tmp/${app_id}.deb" \
-  && apt install "/tmp/${app_id}.deb" \
-  && rm $_
+COPY --from=builder /usr/bin/delta /usr/bin/delta
 
 #===============================================================================
 # Set up a non-root user
