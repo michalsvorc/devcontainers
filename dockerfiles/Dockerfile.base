@@ -4,6 +4,16 @@
 
 FROM debian:bookworm-slim AS builder
 
+#===============================================================================
+# Build arguments
+#===============================================================================
+
+ARG GOPATH='/opt/go'
+
+#===============================================================================
+# Update package repositories and install new packages
+#===============================================================================
+
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive \
   apt-get install \
@@ -16,6 +26,7 @@ RUN apt-get update \
     g++ \
     gettext \
     git \
+    golang \
     libtool-bin \
     make \
     ninja-build \
@@ -34,13 +45,28 @@ SHELL ["/bin/bash", "-c"]
 #===============================================================================
 
 ARG tag='stable'
+ARG repository='neovim/neovim'
 
-RUN cd /opt \
-  && curl -L "https://github.com/neovim/neovim/archive/refs/tags/${tag}.tar.gz" \
+RUN cd /tmp \
+  && curl -L "https://github.com/${repository}/archive/refs/tags/${tag}.tar.gz" \
     | tar -xz \
-  && cd "/opt/neovim-${tag}" \
+  && cd "/tmp/neovim-${tag}" \
   && make CMAKE_BUILD_TYPE=Release \
   && make install
+
+#===============================================================================
+# Lazygit binary
+# Link: https://github.com/jesseduffield/lazygit
+#===============================================================================
+
+ARG tag='0.37.0'
+ARG repository='jesseduffield/lazygit'
+
+RUN cd /tmp \
+  && curl -L "https://github.com/${repository}/archive/refs/tags/v${tag}.tar.gz" \
+    | tar -xz \
+  && cd "/tmp/lazygit-${tag}" \
+  && go install
 
 #===============================================================================
 # Base image
@@ -114,6 +140,12 @@ COPY --from=builder /usr/local/bin/nvim /usr/local/bin/nvim
 COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
 
 #===============================================================================
+# Copy lazygit binary from builder stage
+#===============================================================================
+
+COPY --from=builder /opt/go/bin/lazygit /usr/local/bin/lazygit
+
+#===============================================================================
 # Delta binary
 # Link: https://github.com/dandavison/delta
 #===============================================================================
@@ -127,29 +159,6 @@ RUN bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" > \
     "/tmp/${app_id}.deb" \
   && apt install "/tmp/${app_id}.deb" \
   && rm $_
-
-#===============================================================================
-# Lazygit binary
-# Link: https://github.com/jesseduffield/lazygit
-#===============================================================================
-
-ARG app_id='lazygit'
-ARG repository='jesseduffield/lazygit'
-ARG asset="lazygit_([0-9]{1,}\.)+[0-9]{1,}_Linux_${TARGETARCH}.tar.gz$"
-ARG tag='v0.37.0'
-
-RUN mkdir -p "/opt/${app_id}/bin" \
-  && cd "/opt/${app_id}" \
-  && if [[ "$TARGETARCH" == 'amd64' ]]; then \
-    bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" \
-    'lazygit_([0-9]{1,}\.)+[0-9]{1,}_Linux_x86_64.tar.gz$' \
-    | tar -xz --directory 'bin'; \
-  else \
-    bash <(curl -Ls "$gh_release_download") -t "$tag" "$repository" "$asset" \
-    | tar -xz --directory 'bin'; \
-  fi \
-  && ln -sf "/opt/${app_id}/bin/${app_id}" "/usr/local/bin/${app_id}" \
-  && cd -
 
 #===============================================================================
 # Set up a non-root user
