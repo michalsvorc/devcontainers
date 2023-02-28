@@ -95,7 +95,6 @@ FROM debian:bookworm-slim AS base
 ARG shell='/bin/zsh'
 ARG user_name
 ARG user_profile
-ARG scripts_repository='https://github.com/michalsvorc/scripts'
 
 #===============================================================================
 # Update package repositories and install new packages
@@ -204,15 +203,6 @@ RUN git clone \
   --branch 'main' \
   "https://github.com/$user_profile" "$profile_dir" \
   && bash "${profile_dir}/scripts/init.sh"
-
-#===============================================================================
-# Helper scripts
-#===============================================================================
-
-RUN git clone \
-  --depth 1 \
-  --branch 'main' \
-  "$scripts_repository" "${HOME}/scripts"
 
 #===============================================================================
 # Change working directory
