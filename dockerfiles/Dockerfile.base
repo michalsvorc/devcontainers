@@ -106,12 +106,11 @@ RUN apt-get update \
     --assume-yes \
     --no-install-recommends \
     --quiet \
-    bat \
     ca-certificates \
+    bat \
     curl \
     exa \
     fzf \
-    g++ \
     git \
     htop \
     jq \
@@ -120,12 +119,10 @@ RUN apt-get update \
     openssh-client \
     p7zip \
     procps \
-    pwgen \
     ripgrep \
     rsync \
     tmux \
     unzip \
-    vim \
     zsh \
   && rm -rf /var/lib/apt/lists/*
 
