@@ -111,6 +111,7 @@ RUN apt-get update \
     curl \
     exa \
     fzf \
+    g++ \
     git \
     htop \
     jq \
