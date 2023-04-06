@@ -110,6 +110,7 @@ RUN apt-get update \
     bat \
     curl \
     exa \
+    fd-find \
     fzf \
     g++ \
     git \
@@ -126,6 +127,12 @@ RUN apt-get update \
     unzip \
     zsh \
   && rm -rf /var/lib/apt/lists/*
+
+#===============================================================================
+# Post installation
+#===============================================================================
+
+RUN ln -s $(which fdfind) /usr/local/bin/fd
 
 #===============================================================================
 # Use Bash for executing Docker commands
