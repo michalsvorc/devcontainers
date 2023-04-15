@@ -117,6 +117,7 @@ RUN apt-get update \
     htop \
     jq \
     less \
+    locales \
     nnn \
     openssh-client \
     p7zip \
@@ -129,14 +130,26 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 #===============================================================================
-#===============================================================================
-
-
-#===============================================================================
 # Use Bash for executing Docker commands
 #===============================================================================
 
 SHELL ["/bin/bash", "-c"]
+
+#===============================================================================
+# Generate and set locales
+#===============================================================================
+
+ARG language='en_US'
+ARG encoding='UTF-8'
+ARG locale="${language}.${encoding}"
+
+RUN locale-gen $locale
+
+ENV LANG $locale
+ENV LANGUAGE "${language}:en"
+ENV LC_ALL $locale
+
+RUN localedef -i $language -f $encoding $locale
 
 #===============================================================================
 # Link renamed package binaries to expected commands
