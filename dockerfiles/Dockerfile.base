@@ -21,6 +21,7 @@ RUN apt-get update \
     --assume-yes \
     --no-install-recommends \
     --quiet \
+    build-essential \
     ca-certificates \
     cmake \
     curl \
