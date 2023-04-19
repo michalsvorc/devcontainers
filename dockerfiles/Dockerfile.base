@@ -111,12 +111,14 @@ RUN apt-get update \
     bat \
     curl \
     exa \
+    fd-find \
     fzf \
     g++ \
     git \
     htop \
     jq \
     less \
+    locales \
     nnn \
     openssh-client \
     p7zip \
@@ -135,11 +137,27 @@ RUN apt-get update \
 SHELL ["/bin/bash", "-c"]
 
 #===============================================================================
-# Set up batcat as bat
-# https://github.com/sharkdp/bat#on-ubuntu-using-apt
+# Generate and set locales
 #===============================================================================
 
-RUN ln -s /usr/bin/batcat /usr/local/bin/bat
+ARG language='en_US'
+ARG encoding='UTF-8'
+ARG locale="${language}.${encoding}"
+
+RUN locale-gen $locale
+
+ENV LANG $locale
+ENV LANGUAGE "${language}:en"
+ENV LC_ALL $locale
+
+RUN localedef -i $language -f $encoding $locale
+
+#===============================================================================
+# Link renamed package binaries to expected commands
+#===============================================================================
+
+RUN ln -s $(which fdfind) /usr/local/bin/fd
+RUN ln -s $(which batcat) /usr/local/bin/bat
 
 #===============================================================================
 # Copy compiled binaries from builder stage
