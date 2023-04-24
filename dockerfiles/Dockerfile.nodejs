@@ -14,9 +14,7 @@ RUN curl -fsSL 'https://fnm.vercel.app/install' | bash
 # Node.js LTS version
 #===============================================================================
 
-ARG fnm_bin="${HOME}/.local/share/fnm/fnm"
-
-RUN "$fnm_bin" install --lts
+RUN "${HOME}/.local/share/fnm/fnm" install --lts
 
 #===============================================================================
 # Runtime entrypoint
