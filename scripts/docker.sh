@@ -26,6 +26,7 @@ readonly env_base='base'
 readonly env_nodejs='nodejs'
 readonly env_python='python'
 readonly env_golang='golang'
+readonly env_deno='deno'
 readonly env_default="$env_base"
 
 # Image
@@ -66,6 +67,7 @@ Options:
                           ${env_nodejs}
                           ${env_python}
                           ${env_golang}
+                          ${env_deno}
                         Default: ${env_default}
   -t, --tag <string>    Set custom image tag.
 
@@ -194,7 +196,7 @@ while test $# -gt 0 ; do
       env="$1"
 
       case "${env:-}" in
-        "$env_base" | "$env_nodejs" | "$env_python" | "$env_golang" )
+        "$env_base" | "$env_nodejs" | "$env_python" | "$env_golang" | "$env_deno" )
           ;;
         * )
           die "$(
