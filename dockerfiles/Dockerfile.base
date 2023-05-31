@@ -214,12 +214,11 @@ RUN mkdir -p \
 #===============================================================================
 
 RUN git clone \
+  --recurse-submodules \
   --depth 1 \
   --branch 'main' \
   "https://github.com/$user_profile" "$profile_dir" \
-  && cd "$profile_dir" \
-  && git submodule update --init '.config/nvim' \
-  && bash "scripts/init.sh"
+  && bash "${profile_dir}/scripts/init.sh"
 
 #===============================================================================
 # Change working directory
