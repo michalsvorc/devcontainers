@@ -112,6 +112,7 @@ RUN apt-get update \
     curl \
     exa \
     fd-find \
+    file \
     fzf \
     g++ \
     git \
@@ -119,6 +120,7 @@ RUN apt-get update \
     jq \
     less \
     locales \
+    nnn \
     openssh-client \
     p7zip \
     procps \
