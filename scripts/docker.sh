@@ -151,9 +151,7 @@ docker_run() {
 
   docker_network_inspect
 
-  printf 'Creating container "%s" from image "%s".\n' \
-    "$container_name" \
-    "$image_handle"
+  printf 'Creating container from image "%s".\n' "$image_handle"
 
   docker run \
     -it \
