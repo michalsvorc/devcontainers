@@ -101,10 +101,10 @@ RUN mkdir -p /etc/apt/keyrings \
   && apt-get install -y eza
 
 #===============================================================================
-# Base image
+# Runner image
 #===============================================================================
 
-FROM debian:bookworm-slim AS base
+FROM debian:bookworm-slim
 
 #===============================================================================
 # Build arguments
