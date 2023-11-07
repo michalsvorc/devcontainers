@@ -53,7 +53,7 @@ WORKDIR /tmp
 RUN curl -L "https://github.com/${repository}/archive/refs/tags/${tag}.tar.gz" \
   | tar -xz
 
-WORKDIR /the/workdir/path "/tmp/neovim-${tag}"
+WORKDIR "/tmp/neovim-${tag}"
 RUN make CMAKE_BUILD_TYPE=Release \
   && make install
 
