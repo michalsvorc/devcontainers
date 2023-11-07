@@ -18,28 +18,28 @@ ARG GOPATH='/opt/go'
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive \
   apt-get install \
-    --assume-yes \
-    --no-install-recommends \
-    --quiet \
-    build-essential \
-    ca-certificates \
-    cmake \
-    curl \
-    g++ \
-    gettext \
-    git \
-    golang \
-    libtool-bin \
-    make \
-    ninja-build \
-    pkg-config \
-    unzip
+  --assume-yes \
+  --no-install-recommends \
+  --quiet \
+  build-essential \
+  ca-certificates \
+  cmake \
+  curl \
+  g++ \
+  gettext \
+  git \
+  golang \
+  libtool-bin \
+  make \
+  ninja-build \
+  pkg-config \
+  unzip
 
 #===============================================================================
-# Use Bash for executing Docker commands
+# Set SHELL
 #===============================================================================
 
-SHELL ["/bin/bash", "-c"]
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 #===============================================================================
 # Neovim binary
@@ -49,11 +49,12 @@ SHELL ["/bin/bash", "-c"]
 ARG tag='stable'
 ARG repository='neovim/neovim'
 
-RUN cd /tmp \
-  && curl -L "https://github.com/${repository}/archive/refs/tags/${tag}.tar.gz" \
-    | tar -xz \
-  && cd "/tmp/neovim-${tag}" \
-  && make CMAKE_BUILD_TYPE=Release \
+WORKDIR /tmp
+RUN curl -L "https://github.com/${repository}/archive/refs/tags/${tag}.tar.gz" \
+  | tar -xz
+
+WORKDIR /the/workdir/path "/tmp/neovim-${tag}"
+RUN make CMAKE_BUILD_TYPE=Release \
   && make install
 
 #===============================================================================
@@ -64,11 +65,11 @@ RUN cd /tmp \
 ARG tag='0.37.0'
 ARG repository='jesseduffield/lazygit'
 
-RUN cd /tmp \
-  && curl -L "https://github.com/${repository}/archive/refs/tags/v${tag}.tar.gz" \
-    | tar -xz \
-  && cd "/tmp/lazygit-${tag}" \
-  && go install
+WORKDIR /tmp
+RUN curl -L "https://github.com/${repository}/archive/refs/tags/v${tag}.tar.gz" \
+  | tar -xz
+WORKDIR  "/tmp/lazygit-${tag}"
+RUN go install
 
 #===============================================================================
 # Delta binary
@@ -79,8 +80,8 @@ ARG tag='0.15.1'
 ARG repository='dandavison/delta'
 
 RUN curl -L "https://github.com/${repository}/releases/download/${tag}/git-delta_${tag}_${TARGETARCH}.deb" \
-    -o "/tmp/delta-${tag}.deb" \
-  && apt install $_ \
+  -o "/tmp/delta-${tag}.deb" \
+  && apt-get install $_ \
   && rm $_
 
 #===============================================================================
@@ -93,7 +94,7 @@ FROM debian:bookworm-slim AS base
 # Build arguments
 #===============================================================================
 
-ARG shell='/bin/zsh'
+ARG default_shell='/bin/zsh'
 ARG user_name
 ARG user_profile
 
@@ -104,31 +105,31 @@ ARG user_profile
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive \
   apt-get install \
-    --assume-yes \
-    --no-install-recommends \
-    --quiet \
-    ca-certificates \
-    bat \
-    curl \
-    exa \
-    fd-find \
-    file \
-    fzf \
-    g++ \
-    git \
-    htop \
-    jq \
-    less \
-    locales \
-    nnn \
-    openssh-client \
-    p7zip \
-    procps \
-    ripgrep \
-    rsync \
-    tmux \
-    unzip \
-    zsh \
+  --assume-yes \
+  --no-install-recommends \
+  --quiet \
+  ca-certificates \
+  bat \
+  curl \
+  exa \
+  fd-find \
+  file \
+  fzf \
+  g++ \
+  git \
+  htop \
+  jq \
+  less \
+  locales \
+  nnn \
+  openssh-client \
+  p7zip \
+  procps \
+  ripgrep \
+  rsync \
+  tmux \
+  unzip \
+  zsh \
   && rm -rf /var/lib/apt/lists/*
 
 #===============================================================================
@@ -157,8 +158,8 @@ RUN localedef -i $language -f $encoding $locale
 # Link renamed package binaries to expected commands
 #===============================================================================
 
-RUN ln -s $(which fdfind) /usr/local/bin/fd
-RUN ln -s $(which batcat) /usr/local/bin/bat
+RUN ln -s "$(which fdfind)" /usr/local/bin/fd
+RUN ln -s "$(which batcat)" /usr/local/bin/bat
 
 #===============================================================================
 # Copy compiled binaries from builder stage
@@ -175,7 +176,7 @@ COPY --from=builder /usr/bin/delta /usr/bin/delta
 
 RUN useradd \
   --create-home \
-  --shell "$shell" \
+  --shell "$default_shell" \
   --user-group \
   "$user_name"
 
