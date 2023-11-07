@@ -139,6 +139,7 @@ RUN apt-get update \
   nnn \
   nodejs \
   npm \
+  make \
   openssh-client \
   p7zip \
   procps \
