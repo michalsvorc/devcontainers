@@ -127,6 +127,7 @@ RUN apt-get update \
   procps \
   ripgrep \
   rsync \
+  shellcheck \
   tmux \
   unzip \
   zsh \
