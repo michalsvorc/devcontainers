@@ -137,6 +137,8 @@ RUN apt-get update \
   less \
   locales \
   nnn \
+  nodejs \
+  npm \
   openssh-client \
   p7zip \
   procps \
