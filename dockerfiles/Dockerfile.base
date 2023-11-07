@@ -29,11 +29,13 @@ RUN apt-get update \
   gettext \
   git \
   golang \
+  gpg \
   libtool-bin \
   make \
   ninja-build \
   pkg-config \
-  unzip
+  unzip \
+  wget
 
 #===============================================================================
 # Set SHELL
@@ -85,6 +87,20 @@ RUN curl -L "https://github.com/${repository}/releases/download/${tag}/git-delta
   && rm $_
 
 #===============================================================================
+# Eza
+# Links:
+#   https://github.com/eza-community/eza
+#   https://github.com/eza-community/eza/blob/main/INSTALL.md
+#===============================================================================
+
+RUN mkdir -p /etc/apt/keyrings \
+  && wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | gpg --dearmor -o /etc/apt/keyrings/gierens.gpg \
+  && echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | tee /etc/apt/sources.list.d/gierens.list \
+  && chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list \
+  && apt-get update \
+  && apt-get install -y eza
+
+#===============================================================================
 # Base image
 #===============================================================================
 
@@ -111,7 +127,6 @@ RUN apt-get update \
   ca-certificates \
   bat \
   curl \
-  exa \
   fd-find \
   file \
   fzf \
@@ -170,6 +185,7 @@ COPY --from=builder /usr/local/bin/nvim /usr/local/bin/nvim
 COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
 COPY --from=builder /opt/go/bin/lazygit /usr/local/bin/lazygit
 COPY --from=builder /usr/bin/delta /usr/bin/delta
+COPY --from=builder /usr/bin/eza /usr/bin/eza
 
 #===============================================================================
 # Set up a non-root user
