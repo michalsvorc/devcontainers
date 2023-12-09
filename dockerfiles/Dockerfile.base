@@ -152,10 +152,10 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 #===============================================================================
-# Use Bash for executing Docker commands
+# Set SHELL for executing Docker commands
 #===============================================================================
 
-SHELL ["/bin/bash", "-c"]
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 #===============================================================================
 # Generate and set locales
