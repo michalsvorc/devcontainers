@@ -14,7 +14,12 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Fast Node Manager (fnm)
 #===============================================================================
 
-RUN curl -fsSL 'https://fnm.vercel.app/install' | bash
+RUN curl -fsSL 'https://fnm.vercel.app/install' | bash -s -- --skip-shell \
+  && printf '\n%s\n%s\n%s\n' \
+  '# https://github.com/Schniz/fnm' \
+  'export PATH="/home/guest/.local/share/fnm:$PATH"' \
+  'eval "$(fnm env --use-on-cd)"' \
+  >> "${HOME}/.profile"
 
 #===============================================================================
 # Node.js LTS version
