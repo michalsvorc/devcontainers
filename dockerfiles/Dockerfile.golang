@@ -9,20 +9,19 @@ FROM devcontainer:base
 #===============================================================================
 
 ARG user_name
-ARG go_version='1.19.2'
-ARG bin_dir="${HOME}/.local/bin"
-ARG share_dir="${HOME}/.local/share"
+ARG user_profile
 
 #===============================================================================
-# Set SHELL for executing Docker commands
+# SHELL for executing Docker commands
 #===============================================================================
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 #===============================================================================
-# Set user environment variables
+# User environment variables
 #===============================================================================
 
+ENV HOME "/home/${user_name}"
 ENV USER "$user_name"
 
 #===============================================================================
@@ -32,20 +31,54 @@ ENV USER "$user_name"
 USER $USER
 
 #===============================================================================
+# Create $HOME directories
+#===============================================================================
+
+ARG dir_bin="${HOME}/.local/bin"
+ARG dir_profile="${HOME}/.local/profile"
+ARG dir_share="${HOME}/.local/share"
+ARG dir_ssh="${HOME}/.ssh"
+
+RUN mkdir -p \
+  "$dir_bin" \
+  "$dir_profile" \
+  "$dir_share" \
+  "$dir_ssh" \
+  && chmod 700 "$dir_ssh"
+
+#===============================================================================
+# Change working directory
+#===============================================================================
+
+WORKDIR "$HOME"
+
+#===============================================================================
+# User profile configuration files
+#===============================================================================
+
+RUN git clone \
+  --recurse-submodules \
+  --depth 1 \
+  --branch 'main' \
+  "https://github.com/${user_profile}" "$dir_profile" \
+  && bash "${dir_profile}/scripts/init.sh"
+
+#===============================================================================
 # Install Go
 #===============================================================================
 
+ARG go_version='1.19.2'
 ARG go_tarfile="go${go_version}.linux-amd64.tar.gz"
 ARG go_install_dir="go${go_version}.linux-amd64.tar.gz"
 
 RUN curl -JLO "https://go.dev/dl/${go_tarfile}" \
-  && tar -C "$share_dir" -xzf "$go_tarfile" \
+  && tar -C "$dir_share" -xzf "$go_tarfile" \
   && rm "$go_tarfile" \
-  && ln -sfn "${share_dir}/go/bin/go" "${bin_dir}/go" \
-  && ln -sfn "${share_dir}/go/bin/gofmt" "${bin_dir}/gofmt" \
+  && ln -sfn "${dir_share}/go/bin/go" "${dir_bin}/go" \
+  && ln -sfn "${dir_share}/go/bin/gofmt" "${dir_bin}/gofmt" \
   && printf '%s\nexport PATH="%s:${PATH}"\n' \
   '# Add Go binary to PATH' \
-  "$(${bin_dir}/go env GOPATH)/bin/" \
+  "$(${dir_bin}/go env GOPATH)/bin/" \
   >> "${HOME}/.profile"
 
 

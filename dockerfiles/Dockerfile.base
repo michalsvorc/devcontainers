@@ -12,6 +12,12 @@ ARG TARGETARCH
 ARG GOPATH='/opt/go'
 
 #===============================================================================
+# SHELL for executing Docker commands
+#===============================================================================
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+#===============================================================================
 # Update package repositories and install new packages
 #===============================================================================
 
@@ -36,12 +42,6 @@ RUN apt-get update \
   pkg-config \
   unzip \
   wget
-
-#===============================================================================
-# Set SHELL
-#===============================================================================
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 #===============================================================================
 # Neovim binary
@@ -83,8 +83,12 @@ ARG repository='dandavison/delta'
 
 RUN curl -L "https://github.com/${repository}/releases/download/${tag}/git-delta_${tag}_${TARGETARCH}.deb" \
   -o "/tmp/delta-${tag}.deb" \
-  && apt-get install $_ \
-  && rm $_
+  && apt-get install \
+  --assume-yes \
+  --no-install-recommends \
+  --quiet \
+  "$_" \
+  && rm "$_"
 
 #===============================================================================
 # Eza
@@ -98,7 +102,11 @@ RUN mkdir -p /etc/apt/keyrings \
   && echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | tee /etc/apt/sources.list.d/gierens.list \
   && chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list \
   && apt-get update \
-  && apt-get install -y eza
+  && apt-get install \
+  --assume-yes \
+  --no-install-recommends \
+  --quiet \
+  eza
 
 #===============================================================================
 # Runner image
@@ -113,6 +121,12 @@ FROM debian:bookworm-slim
 ARG default_shell='/bin/zsh'
 ARG user_name
 ARG user_profile
+
+#===============================================================================
+# SHELL for executing Docker commands
+#===============================================================================
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 #===============================================================================
 # Update package repositories and install new packages
@@ -152,12 +166,6 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 #===============================================================================
-# Set SHELL for executing Docker commands
-#===============================================================================
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-#===============================================================================
 # Generate and set locales
 #===============================================================================
 
@@ -191,7 +199,7 @@ COPY --from=builder /usr/bin/delta /usr/bin/delta
 COPY --from=builder /usr/bin/eza /usr/bin/eza
 
 #===============================================================================
-# Set up a non-root user
+# Add non-root user account
 #===============================================================================
 
 RUN useradd \
@@ -199,58 +207,3 @@ RUN useradd \
   --shell "$default_shell" \
   --user-group \
   "$user_name"
-
-#===============================================================================
-# Set user environment variables
-#===============================================================================
-
-ENV HOME "/home/${user_name}"
-ENV USER "$user_name"
-
-#===============================================================================
-# Set the non-root user
-#===============================================================================
-
-USER $USER
-
-#===============================================================================
-# Create $HOME directories
-#===============================================================================
-
-ARG cache_dir="${HOME}/.cache"
-ARG local_dir="${HOME}/.local"
-ARG bin_dir="${local_dir}/bin"
-ARG profile_dir="${local_dir}/profile"
-ARG share_dir="${local_dir}/share"
-ARG ssh_dir="${HOME}/.ssh"
-
-RUN mkdir -p \
-  "$cache_dir" \
-  "$local_dir" \
-  "$bin_dir" \
-  "$profile_dir" \
-  "$share_dir" \
-  "$ssh_dir"
-
-#===============================================================================
-# User profile configuration files
-#===============================================================================
-
-RUN git clone \
-  --recurse-submodules \
-  --depth 1 \
-  --branch 'main' \
-  "https://github.com/$user_profile" "$profile_dir" \
-  && bash "${profile_dir}/scripts/init.sh"
-
-#===============================================================================
-# Change working directory
-#===============================================================================
-
-WORKDIR "$HOME"
-
-#===============================================================================
-# Runtime entrypoint
-#===============================================================================
-
-ENTRYPOINT ["/bin/zsh", "--login"]

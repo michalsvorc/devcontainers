@@ -9,15 +9,19 @@ FROM devcontainer:base
 #===============================================================================
 
 ARG user_name
-ARG python_version='3.10'
+ARG user_profile
+
+#===============================================================================
+# SHELL for executing Docker commands
+#===============================================================================
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 #===============================================================================
 # Install pyenv dependencies
 #
 # Link: https://github.com/pyenv/pyenv/wiki#suggested-build-environment
 #===============================================================================
-
-USER root
 
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive \
@@ -30,15 +34,10 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 #===============================================================================
-# Set SHELL for executing Docker commands
+# User environment variables
 #===============================================================================
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-#===============================================================================
-# Set user environment variables
-#===============================================================================
-
+ENV HOME "/home/${user_name}"
 ENV USER "$user_name"
 
 #===============================================================================
@@ -46,6 +45,37 @@ ENV USER "$user_name"
 #===============================================================================
 
 USER $USER
+
+#===============================================================================
+# Create $HOME directories
+#===============================================================================
+
+ARG dir_bin="${HOME}/.local/bin"
+ARG dir_profile="${HOME}/.local/profile"
+ARG dir_ssh="${HOME}/.ssh"
+
+RUN mkdir -p \
+  "$dir_bin" \
+  "$dir_profile" \
+  "$dir_ssh" \
+  && chmod 700 "$dir_ssh"
+
+#===============================================================================
+# Change working directory
+#===============================================================================
+
+WORKDIR "$HOME"
+
+#===============================================================================
+# User profile configuration files
+#===============================================================================
+
+RUN git clone \
+  --recurse-submodules \
+  --depth 1 \
+  --branch 'main' \
+  "https://github.com/${user_profile}" "$dir_profile" \
+  && bash "${dir_profile}/scripts/init.sh"
 
 #===============================================================================
 # Runtime entrypoint
