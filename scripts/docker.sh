@@ -9,9 +9,9 @@
 # Abort the script on errors and unbound variables
 #===============================================================================
 
-set -o errexit      # Abort on nonzero exit status.
-set -o nounset      # Abort on unbound variable.
-set -o pipefail     # Don't hide errors within pipes.
+set -o errexit  # Abort on nonzero exit status.
+set -o nounset  # Abort on unbound variable.
+set -o pipefail # Don't hide errors within pipes.
 # set -o xtrace       # Set debugging.
 
 #===============================================================================
@@ -26,7 +26,6 @@ readonly env_base='base'
 readonly env_nodejs='nodejs'
 readonly env_python='python'
 readonly env_golang='golang'
-readonly env_deno='deno'
 readonly env_default="$env_base"
 
 # Image
@@ -67,7 +66,6 @@ Options:
                           ${env_nodejs}
                           ${env_python}
                           ${env_golang}
-                          ${env_deno}
                         Default: ${env_default}
   -t, --tag <string>    Set custom image tag.
 
@@ -139,8 +137,8 @@ docker_push() {
   printf 'Pushing "%s".\n' "$registry_uri"
 
   docker image tag \
-    "$image_handle" "$registry_uri" \
-    && docker push "$registry_uri"
+    "$image_handle" "$registry_uri" &&
+    docker push "$registry_uri"
 }
 
 docker_run() {
@@ -163,10 +161,10 @@ docker_run() {
 }
 
 docker_network_inspect() {
-  docker network inspect "$network" &> /dev/null \
-    || die "$(
-      printf 'Network "%s" not found.\n' "$network" \
-      && printf 'Run "docker network create %s" command.' "$network"
+  docker network inspect "$network" &>/dev/null ||
+    die "$(
+      printf 'Network "%s" not found.\n' "$network" &&
+        printf 'Run "docker network create %s" command.' "$network"
     )"
 }
 
@@ -178,75 +176,73 @@ test $# -eq 0 && die 'No arguments provided.'
 
 env="$env_default"
 
-while test $# -gt 0 ; do
+while test $# -gt 0; do
   case "${1:-}" in
-    -h | --help )
-      usage 0
-      ;;
-    --version )
-      print_version
-      exit 0
-      ;;
-    -e | --env )
-      shift
-      test $# -eq 0 && die 'Missing argument for option "--env".'
+  -h | --help)
+    usage 0
+    ;;
+  --version)
+    print_version
+    exit 0
+    ;;
+  -e | --env)
+    shift
+    test $# -eq 0 && die 'Missing argument for option "--env".'
 
-      env="$1"
+    env="$1"
 
-      case "${env:-}" in
-        "$env_base" | "$env_nodejs" | "$env_python" | "$env_golang" | "$env_deno" )
-          ;;
-        * )
-          die "$(
-            printf 'Unrecognized value "%s" for option "--env".' \
-            "${env#-}"
-          )"
-          ;;
-      esac
+    case "${env:-}" in
+    "$env_base" | "$env_nodejs" | "$env_python" | "$env_golang") ;;
+    *)
+      die "$(
+        printf 'Unrecognized value "%s" for option "--env".' \
+          "${env#-}"
+      )"
+      ;;
+    esac
 
-      shift
-      test $# -eq 0 && die 'Missing "command" argument.'
-      ;;
-    -t | --tag )
-      shift
-      test $# -eq 0 && die 'Missing argument for option "--tag".'
-      image_tag="${1:-}"
+    shift
+    test $# -eq 0 && die 'Missing "command" argument.'
+    ;;
+  -t | --tag)
+    shift
+    test $# -eq 0 && die 'Missing argument for option "--tag".'
+    image_tag="${1:-}"
 
-      shift
-      test $# -eq 0 && die 'Missing "command" argument.'
-      ;;
-    build)
-      image_tag="${image_tag:-$env}"
-      dockerfile="Dockerfile.${env}"
-      rest_args="${@:2}"
+    shift
+    test $# -eq 0 && die 'Missing "command" argument.'
+    ;;
+  build)
+    image_tag="${image_tag:-$env}"
+    dockerfile="Dockerfile.${env}"
+    rest_args="${@:2}"
 
-      docker_build \
-        "$image_tag" \
-        "$dockerfile" \
-        "$rest_args"
-      break
-      ;;
-    push)
-      image_tag="${image_tag:-$env}"
-      registry_host="${2:-$registry_host_default}"
+    docker_build \
+      "$image_tag" \
+      "$dockerfile" \
+      "$rest_args"
+    break
+    ;;
+  push)
+    image_tag="${image_tag:-$env}"
+    registry_host="${2:-$registry_host_default}"
 
-      docker_push \
-        "$image_tag" \
-        "$registry_host"
-      break
-      ;;
-    run)
-      image_tag="${image_tag:-$env}"
-      rest_args="${@:2}"
+    docker_push \
+      "$image_tag" \
+      "$registry_host"
+    break
+    ;;
+  run)
+    image_tag="${image_tag:-$env}"
+    rest_args="${@:2}"
 
-      docker_run \
-        "$image_tag" \
-        "$rest_args"
-      break
-      ;;
-    * )
-      die "$(printf 'Unrecognized argument "%s".' "${1#-}")"
-      ;;
+    docker_run \
+      "$image_tag" \
+      "$rest_args"
+    break
+    ;;
+  *)
+    die "$(printf 'Unrecognized argument "%s".' "${1#-}")"
+    ;;
   esac
 done
-
