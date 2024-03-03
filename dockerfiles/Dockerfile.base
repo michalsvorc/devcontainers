@@ -8,7 +8,8 @@ FROM debian:bookworm-slim AS builder
 # Build arguments
 #===============================================================================
 
-ARG TARGETARCH
+ARG BUILDKIT_INLINE_CACHE=1
+ARG SCRIPTS_PATH='/opt/scripts'
 ARG GOPATH='/opt/go'
 
 #===============================================================================
@@ -18,95 +19,26 @@ ARG GOPATH='/opt/go'
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 #===============================================================================
+# Copy scripts from local directory to the container
+#===============================================================================
+
+WORKDIR "${SCRIPTS_PATH}"
+COPY "scripts" "."
+
+#===============================================================================
 # Update package repositories and install new packages
 #===============================================================================
 
-RUN apt-get update \
-  && DEBIAN_FRONTEND=noninteractive \
-  apt-get install \
-  --assume-yes \
-  --no-install-recommends \
-  --quiet \
-  build-essential \
-  ca-certificates \
-  cmake \
-  curl \
-  g++ \
-  gettext \
-  git \
-  golang \
-  gpg \
-  libtool-bin \
-  make \
-  ninja-build \
-  pkg-config \
-  unzip \
-  wget
+RUN "${SCRIPTS_PATH}/builder_packages.sh"
 
 #===============================================================================
-# Neovim binary
-# Link: https://github.com/neovim/neovim
+# Install binary packages
 #===============================================================================
 
-ARG tag='stable'
-ARG repository='neovim/neovim'
-
-WORKDIR /tmp
-RUN curl -L "https://github.com/${repository}/archive/refs/tags/${tag}.tar.gz" \
-  | tar -xz
-
-WORKDIR "/tmp/neovim-${tag}"
-RUN make CMAKE_BUILD_TYPE=Release \
-  && make install
-
-#===============================================================================
-# Lazygit binary
-# Link: https://github.com/jesseduffield/lazygit
-#===============================================================================
-
-ARG tag='0.37.0'
-ARG repository='jesseduffield/lazygit'
-
-WORKDIR /tmp
-RUN curl -L "https://github.com/${repository}/archive/refs/tags/v${tag}.tar.gz" \
-  | tar -xz
-WORKDIR  "/tmp/lazygit-${tag}"
-RUN go install
-
-#===============================================================================
-# Delta binary
-# Link: https://github.com/dandavison/delta
-#===============================================================================
-
-ARG tag='0.15.1'
-ARG repository='dandavison/delta'
-
-RUN curl -L "https://github.com/${repository}/releases/download/${tag}/git-delta_${tag}_${TARGETARCH}.deb" \
-  -o "/tmp/delta-${tag}.deb" \
-  && apt-get install \
-  --assume-yes \
-  --no-install-recommends \
-  --quiet \
-  "$_" \
-  && rm "$_"
-
-#===============================================================================
-# Eza
-# Links:
-#   https://github.com/eza-community/eza
-#   https://github.com/eza-community/eza/blob/main/INSTALL.md
-#===============================================================================
-
-RUN mkdir -p /etc/apt/keyrings \
-  && wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | gpg --dearmor -o /etc/apt/keyrings/gierens.gpg \
-  && echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | tee /etc/apt/sources.list.d/gierens.list \
-  && chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list \
-  && apt-get update \
-  && apt-get install \
-  --assume-yes \
-  --no-install-recommends \
-  --quiet \
-  eza
+RUN "${SCRIPTS_PATH}/install_neovim.sh"
+RUN "${SCRIPTS_PATH}/install_lazygit.sh"
+RUN "${SCRIPTS_PATH}/install_delta.sh"
+RUN "${SCRIPTS_PATH}/install_eza.sh"
 
 #===============================================================================
 # Runner image
@@ -118,9 +50,9 @@ FROM debian:bookworm-slim
 # Build arguments
 #===============================================================================
 
-ARG default_shell='/bin/zsh'
-ARG user_name
-ARG user_profile
+ARG BUILDKIT_INLINE_CACHE=1
+ARG SCRIPTS_PATH='/opt/scripts'
+ARG GOPATH='/opt/go'
 
 #===============================================================================
 # SHELL for executing Docker commands
@@ -129,60 +61,36 @@ ARG user_profile
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 #===============================================================================
+# Copy scripts from local directory to the container
+#===============================================================================
+
+WORKDIR "${SCRIPTS_PATH}"
+COPY "scripts" "."
+
+#===============================================================================
 # Update package repositories and install new packages
 #===============================================================================
 
-RUN apt-get update \
-  && DEBIAN_FRONTEND=noninteractive \
-  apt-get install \
-  --assume-yes \
-  --no-install-recommends \
-  --quiet \
-  ca-certificates \
-  bat \
-  curl \
-  fd-find \
-  file \
-  fzf \
-  g++ \
-  git \
-  htop \
-  jq \
-  less \
-  locales \
-  nnn \
-  nodejs \
-  npm \
-  make \
-  openssh-client \
-  p7zip \
-  procps \
-  ripgrep \
-  rsync \
-  shellcheck \
-  tmux \
-  unzip \
-  zsh \
-  && rm -rf /var/lib/apt/lists/*
+RUN "${SCRIPTS_PATH}/runner_packages.sh"
 
 #===============================================================================
 # Generate and set locales
 #===============================================================================
 
-ARG language='en_US'
-ARG encoding='UTF-8'
-ARG locale="${language}.${encoding}"
+ARG ISO_LANGUAGE='en_US'
+ARG ENCODING='UTF-8'
+ARG locale="${ISO_LANGUAGE}.${ENCODING}"
 
-RUN locale-gen $locale
+RUN locale-gen "${locale}"
 
-ENV LANG $locale
-ENV LANGUAGE "${language}:en"
-ENV LC_ALL $locale
+ENV LANG "${locale}"
+ENV LANGUAGE "${ISO_LANGUAGE}:en"
+ENV LC_ALL "${locale}"
 
-RUN localedef -i $language -f $encoding $locale
+RUN localedef -i "${ISO_LANGUAGE}" -f "${ENCODING}" "${locale}"
 
 #===============================================================================
-# Link renamed package binaries to expected commands
+# Link Debian renamed package binaries to expected commands
 #===============================================================================
 
 RUN ln -s "$(which fdfind)" /usr/local/bin/fd
@@ -195,15 +103,6 @@ RUN ln -s "$(which batcat)" /usr/local/bin/bat
 COPY --from=builder /usr/local/bin/nvim /usr/local/bin/nvim
 COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
 COPY --from=builder /opt/go/bin/lazygit /usr/local/bin/lazygit
-COPY --from=builder /usr/bin/delta /usr/bin/delta
-COPY --from=builder /usr/bin/eza /usr/bin/eza
+COPY --from=builder /usr/local/bin/delta /usr/local/bin/delta
+COPY --from=builder /root/.cargo/bin/eza /usr/local/bin/eza
 
-#===============================================================================
-# Add non-root user account
-#===============================================================================
-
-RUN useradd \
-  --create-home \
-  --shell "$default_shell" \
-  --user-group \
-  "$user_name"
