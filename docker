@@ -23,6 +23,7 @@ IMAGE_NAME = "devcontainer"
 NETWORK = "bridge"
 
 environments = [
+    "base",
     "nodejs",
     "python",
     "golang",
