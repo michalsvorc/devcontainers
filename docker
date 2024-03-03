@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+#
+# Docker automation shell script.
+# Dependencies: docker
+#
+# Author: Michal Svorc <dev@michalsvorc.com>
+# License: MIT license (https://opensource.org/licenses/MIT)
+# Guidelines: https://google.github.io/styleguide/pyguide
+
+import argparse
+import logging
+import os
+import pdb
+import subprocess
+from enum import Enum
+
+# ===============================================================================
+# Variables
+# ===============================================================================
+
+VERSION = "2.0.0"
+IMAGE_NAME = "devcontainer"
+NETWORK = "bridge"
+
+environments = [
+    "nodejs",
+    "python",
+    "golang",
+]
+
+script_path: str = os.path.dirname(os.path.realpath(__file__))
+
+
+class Command(Enum):
+    BUILD = "build"
+    RUN = "run"
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Docker automation shell script.",
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"%(prog)s {VERSION}",
+        help="show program version and exit",
+    )
+    parser.add_argument(
+        "-e",
+        "--env",
+        choices=environments,
+        help=f"specify Docker environment: {environments}",
+    )
+    parser.add_argument(
+        "command",
+        choices=[command.value for command in Command],
+        help="specify Docker command",
+    )
+    parser.add_argument(
+        "remaining_args", nargs=argparse.REMAINDER, help="All remaining arguments"
+    )
+    return parser.parse_args()
+
+
+def main():
+    set_logging_level(logging.INFO)
+    enable_debug_mode()
+    args = parse_arguments()
+    image = f"{IMAGE_NAME}:{args.env}"
+    dockerfile = f"Dockerfile.{args.env}"
+
+    if args.command == Command.BUILD.value:
+        docker_build(image, dockerfile, args.remaining_args)
+    if args.command == Command.RUN.value:
+        docker_run(image, NETWORK, args.remaining_args)
+
+
+def docker_build(image, dockerfile, rest_of_args):
+    dockerfile_path = f"{script_path}/dockerfiles/{dockerfile}"
+    command = [
+        "docker",
+        "build",
+        "--file",
+        dockerfile_path,
+        "--tag",
+        image,
+    ]
+    command.extend(rest_of_args)
+    command.append(script_path)
+    logging.info(f"Building image {image} based on {dockerfile}.")
+    subprocess.run(command, check=True)
+
+
+def docker_run(image, network, rest_of_args):
+    container = image.replace("/", "-").replace(":", "-")
+    command = [
+        "docker",
+        "run",
+        "-it",
+        "--network",
+        network,
+        "--name",
+        container,
+        "--init",
+    ]
+    command.extend(rest_of_args)
+    command.append(image)
+    logging.info(f"Running container {container}.")
+    subprocess.run(command, check=True)
+
+
+def set_logging_level(level):
+    logging.basicConfig(level=level)
+
+
+def enable_debug_mode():
+    debug_env = os.environ.get("DEBUG", "").lower()
+    if debug_env in ["1", "true", "yes"]:
+        set_logging_level(logging.DEBUG)
+        logging.basicConfig(level=logging.DEBUG)
+        logging.debug("Debug mode enabled.")
+        pdb.set_trace()
+
+
+if __name__ == "__main__":
+    main()

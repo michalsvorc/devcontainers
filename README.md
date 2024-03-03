@@ -4,16 +4,15 @@ Docker development containers with my [profile](https://github.com/michalsvorc/p
 
 ## Features
 
-- `docker.sh` shell script for Docker commands automation
+- `./docker` script for Docker commands automation
 - Debian slim images
 - Rootless containers
-- [BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/) builds
 - [Zsh](https://www.zsh.org/) shell
 
 ## Usage
 
 ```console
-./scripts/docker.sh --help
+./docker --help
 ```
 
 ## Container networking
@@ -29,26 +28,26 @@ docker network inspect bridge | jq '.[].Containers'
 Every environment is based on `base` image. The `base` image must be built prior to building any other environment:
 
 ```console
-./scripts/docker.sh build
+./docker build
 ```
 
 Build a specific environment image:
 
 ```console
-./scripts/docker.sh --env <environment_id> build
+./docker --env <environment_id> build
 ```
 
 Run environment container:
 
 ```console
-./scripts/docker.sh --env <environment_id> run
+./docker --env <environment_id> run
 ```
 
 Example:
 
 ```console
-./scripts/docker.sh --env python build
-./scripts/docker.sh --env python run
+./docker --env python build --no-cache
+./docker --env python run --rm
 ```
 
 ### Base
@@ -94,6 +93,6 @@ Features:
 If you encounter issues with missing libraries, add `--platform linux/x86_64` flag after native docker commands:
 
 ```console
-$ ./bin/docker.sh --env <environment> build --platform linux/x86_64
-$ ./bin/docker.sh --env <environment> run --platform linux/x86_64
+$ ./docker --env <environment> build --platform linux/x86_64
+$ ./docker --env <environment> run --platform linux/x86_64
 ```
