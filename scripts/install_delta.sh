@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Install delta binary.
+# Installs delta binary.
 # https://github.com/dandavison/delta
 # Dependencies: curl, tar, make, cargo
 #

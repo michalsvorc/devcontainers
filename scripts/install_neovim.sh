@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Install Neovim binary
+# Installs Neovim binary.
 # https://github.com/neovim/neovim
 # Dependencies: curl, tar, make
 #

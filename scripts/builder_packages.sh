@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Install Debian packages for builder stage.
+# Installs Debian packages for builder stage.
 # Dependencies: apt-get, curl, sh
 #
 # Author: Michal Svorc <dev@michalsvorc.com>

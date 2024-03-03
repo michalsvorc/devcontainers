@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Install LazyGit binary.
+# Installs LazyGit binary.
 # https://github.com/jesseduffield/lazygit
 # Dependencies: curl, tar, jq, go
 #

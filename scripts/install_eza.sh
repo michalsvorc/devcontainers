@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Install eza binary.
+# Installs eza binary.
 # https://github.com/eza-community/eza
 # https://github.com/eza-community/eza/blob/main/INSTALL.md
 # Dependencies: curl, tar, cargo
