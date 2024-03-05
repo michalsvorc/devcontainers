@@ -8,8 +8,15 @@ FROM devcontainer:base
 # Build arguments
 #===============================================================================
 
-ARG user_name
-ARG user_profile
+ARG USER_NAME
+ARG SCRIPTS_PATH
+
+#===============================================================================
+# Copy scripts from local directory to the container
+#===============================================================================
+
+WORKDIR "${SCRIPTS_PATH}"
+COPY "scripts" "."
 
 #===============================================================================
 # SHELL for executing Docker commands
@@ -18,17 +25,17 @@ ARG user_profile
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 #===============================================================================
-# User environment variables
-#===============================================================================
-
-ENV HOME "/home/${user_name}"
-ENV USER "$user_name"
-
-#===============================================================================
 # Set the non-root user
 #===============================================================================
 
-USER $USER
+USER "${USER}"
+
+#===============================================================================
+# Set user environment variables
+#===============================================================================
+
+ENV HOME "/home/${USER_NAME}"
+ENV USER "${USER_NAME}"
 
 #===============================================================================
 # Create $HOME directories
@@ -40,50 +47,37 @@ ARG dir_ssh="${HOME}/.ssh"
 ARG dir_zsh_completions="${HOME}/.local/share/zsh/site-functions"
 
 RUN mkdir -p \
-  "$dir_bin" \
-  "$dir_profile" \
-  "$dir_ssh" \
-  "$dir_zsh_completions" \
-  && chmod 700 "$dir_ssh"
+  "${dir_bin}" \
+  "${dir_profile}" \
+  "${dir_ssh}" \
+  "${dir_zsh_completions}" \
+  && chmod 700 "${dir_ssh}"
 
 #===============================================================================
-# Change working directory
+# Setup configuration files
 #===============================================================================
 
-WORKDIR "$HOME"
-
-#===============================================================================
-# User profile configuration files
-#===============================================================================
-
-RUN git clone \
-  --recurse-submodules \
-  --depth 1 \
-  --branch 'main' \
-  "https://github.com/${user_profile}" "$dir_profile" \
-  && bash "${dir_profile}/scripts/init.sh"
+RUN "${SCRIPTS_PATH}/setup_user_profile.sh"
+RUN "${SCRIPTS_PATH}/setup_nvim_config.sh"
 
 #===============================================================================
 # Install fnm (Fast Node Manager)
+# https://github.com/Schniz/fnm
 #===============================================================================
 
-RUN curl -fsSL 'https://fnm.vercel.app/install' \
-  | bash -s -- \
-  --install-dir "$dir_bin" \
-  --skip-shell \
-  && printf '\n%s\n%s\n' \
-  '# https://github.com/Schniz/fnm' \
-  'eval "$(fnm env --use-on-cd)"' \
-  >> "${HOME}/.profile"
+RUN "${SCRIPTS_PATH}/install_fnm.sh" "${dir_bin}" "${dir_zsh_completions}"
 
 #===============================================================================
 # Install Node.js current LTS version
 #===============================================================================
 
-ARG fnm_exec="${dir_bin}/fnm"
-RUN $fnm_exec install --lts \
-  && $fnm_exec completions --shell zsh \
-  > "$dir_zsh_completions/_fnm"
+RUN "${dir_bin}/fnm" install --lts
+
+#===============================================================================
+# Working directory
+#===============================================================================
+
+WORKDIR "$HOME"
 
 #===============================================================================
 # Runtime entrypoint
