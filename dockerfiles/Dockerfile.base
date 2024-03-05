@@ -106,3 +106,14 @@ COPY --from=builder /opt/go/bin/lazygit /usr/local/bin/lazygit
 COPY --from=builder /usr/local/bin/delta /usr/local/bin/delta
 COPY --from=builder /root/.cargo/bin/eza /usr/local/bin/eza
 
+#===============================================================================
+# Add non-root user account
+#===============================================================================
+
+ARG DEFAULT_SHELL='/bin/zsh'
+
+RUN useradd \
+  --create-home \
+  --shell "$DEFAULT_SHELL" \
+  --user-group \
+  "$USER_NAME"
