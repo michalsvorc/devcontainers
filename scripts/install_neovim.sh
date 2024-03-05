@@ -22,9 +22,10 @@ set -o errtrace # Ensure the error trap handler is properly inherited.
 # Variables
 #===============================================================================
 
+readonly REPOSITORY='neovim/neovim'
+
 readonly tag="${1:-nightly}"
 readonly target_path="${2:-/tmp}"
-readonly REPOSITORY='neovim/neovim'
 
 #===============================================================================
 # Functions

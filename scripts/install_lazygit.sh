@@ -23,8 +23,9 @@ set -o xtrace   # Enable shell script debugging mode.
 #===============================================================================
 
 readonly REPOSITORY='jesseduffield/lazygit'
-readonly target_path="${2:-/tmp}"
+
 tag="${1:-}"
+readonly target_path="${2:-/tmp}"
 
 #===============================================================================
 # Functions
