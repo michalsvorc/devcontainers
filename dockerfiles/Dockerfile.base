@@ -28,7 +28,7 @@ COPY "scripts" "."
 # Update package repositories and install new packages
 #===============================================================================
 
-RUN "${SCRIPTS_PATH}/builder_packages.sh"
+RUN "${SCRIPTS_PATH}/base_builder_packages.sh"
 
 #===============================================================================
 # Install binary packages
@@ -69,7 +69,7 @@ COPY "scripts" "."
 # Update package repositories and install new packages
 #===============================================================================
 
-RUN "${SCRIPTS_PATH}/runner_packages.sh"
+RUN "${SCRIPTS_PATH}/base_runner_packages.sh"
 
 #===============================================================================
 # Generate and set locales
