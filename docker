@@ -73,12 +73,16 @@ def main():
     dockerfile = f"Dockerfile.{args.env}"
 
     if args.command == Command.BUILD.value:
-        docker_build(image, dockerfile, args.remaining_args)
+        build(image, dockerfile, args.remaining_args)
     if args.command == Command.RUN.value:
-        docker_run(image, NETWORK, args.remaining_args)
+        run(image, NETWORK, args.remaining_args)
 
 
-def docker_build(image, dockerfile, rest_of_args):
+def build(image, dockerfile, rest_of_args):
+    USER_NAME = "user"
+    SCRIPTS_PATH = "/opt/scripts"
+    build_args = {"USER_NAME": USER_NAME, "SCRIPTS_PATH": SCRIPTS_PATH}
+    env = {"BUILDKIT_INLINE_CACHE": "1"}
     dockerfile_path = f"{script_path}/dockerfiles/{dockerfile}"
     command = [
         "docker",
@@ -88,13 +92,17 @@ def docker_build(image, dockerfile, rest_of_args):
         "--tag",
         image,
     ]
+
+    for key, value in build_args.items():
+        command.extend(["--build-arg", f"{key}={value}"])
+
     command.extend(rest_of_args)
     command.append(script_path)
     logging.info(f"Building image {image} based on {dockerfile}.")
-    subprocess.run(command, check=True)
+    subprocess.run(command, env={**os.environ, **env}, check=True)
 
 
-def docker_run(image, network, rest_of_args):
+def run(image, network, rest_of_args):
     container = image.replace("/", "-").replace(":", "-")
     command = [
         "docker",

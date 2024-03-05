@@ -8,9 +8,8 @@ FROM debian:bookworm-slim AS builder
 # Build arguments
 #===============================================================================
 
-ARG BUILDKIT_INLINE_CACHE=1
-ARG SCRIPTS_PATH='/opt/scripts'
 ARG GOPATH='/opt/go'
+ARG SCRIPTS_PATH
 
 #===============================================================================
 # SHELL for executing Docker commands
@@ -50,9 +49,8 @@ FROM debian:bookworm-slim
 # Build arguments
 #===============================================================================
 
-ARG BUILDKIT_INLINE_CACHE=1
-ARG SCRIPTS_PATH='/opt/scripts'
-ARG GOPATH='/opt/go'
+ARG SCRIPTS_PATH
+ARG USER_NAME
 
 #===============================================================================
 # SHELL for executing Docker commands
@@ -79,15 +77,15 @@ RUN "${SCRIPTS_PATH}/runner_packages.sh"
 
 ARG ISO_LANGUAGE='en_US'
 ARG ENCODING='UTF-8'
-ARG locale="${ISO_LANGUAGE}.${ENCODING}"
+ARG LOCALE="${ISO_LANGUAGE}.${ENCODING}"
 
-RUN locale-gen "${locale}"
+RUN locale-gen "${LOCALE}"
 
-ENV LANG "${locale}"
+ENV LANG "${LOCALE}"
 ENV LANGUAGE "${ISO_LANGUAGE}:en"
-ENV LC_ALL "${locale}"
+ENV LC_ALL "${LOCALE}"
 
-RUN localedef -i "${ISO_LANGUAGE}" -f "${ENCODING}" "${locale}"
+RUN localedef -i "${ISO_LANGUAGE}" -f "${ENCODING}" "${LOCALE}"
 
 #===============================================================================
 # Link Debian renamed package binaries to expected commands
