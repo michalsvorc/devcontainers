@@ -31,7 +31,7 @@ readonly target_path="${2:-/tmp}"
 # Functions
 #===============================================================================
 
-function main() {
+main() {
   if [[ -z "${tag}" ]]; then
     tag=$(get_latest_tag)
   fi
@@ -42,24 +42,24 @@ function main() {
     install
 }
 
-function get_latest_tag() {
+get_latest_tag() {
   local -r url="https://api.github.com/repos/${REPOSITORY}/releases/latest"
   curl -s "${url}" | jq -r .tag_name
 }
 
-function download() {
+download() {
   local -r url="https://github.com/${REPOSITORY}/archive/refs/tags/${tag}.tar.gz"
   curl -L "${url}" |
     tar -xz -C "${target_path}"
 }
 
-function get_asset_dir() {
+get_asset_dir() {
   local -r name="${REPOSITORY#*/}"
   local -r download_dir="${target_path}/${name}-${tag#v}"
   printf "%s" "${download_dir}"
 }
 
-function install() {
+install() {
   go install
 }
 

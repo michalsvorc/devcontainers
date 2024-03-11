@@ -30,6 +30,11 @@ packages=(
 # Functions
 #===============================================================================
 
+main() {
+  update
+  install
+}
+
 update() {
   apt-get update
 }
@@ -42,11 +47,6 @@ install() {
     --quiet \
     "${packages[@]}" &&
     rm -rf /var/lib/apt/lists/*
-}
-
-main() {
-  update
-  install
 }
 
 #===============================================================================

@@ -31,26 +31,26 @@ readonly target_path="${2:-/tmp}"
 # Functions
 #===============================================================================
 
-function main() {
+main() {
   printf "Installing %s %s\n" "${REPOSITORY}" "${tag}"
   download &&
     cd "$(get_asset_dir)" &&
     install
 }
 
-function download() {
+download() {
   local -r url="https://github.com/${REPOSITORY}/archive/refs/tags/${tag}.tar.gz"
   curl -L "${url}" |
     tar -xz -C "${target_path}"
 }
 
-function get_asset_dir() {
+get_asset_dir() {
   local -r name="${REPOSITORY#*/}"
   local -r download_dir="${target_path}/${name}-${tag}"
   printf "%s" "${download_dir}"
 }
 
-function install() {
+install() {
   make CMAKE_BUILD_TYPE=Release
   make install
 }

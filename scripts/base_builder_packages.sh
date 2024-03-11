@@ -43,6 +43,12 @@ packages=(
 # Functions
 #===============================================================================
 
+main() {
+  update
+  install
+  install_rust
+}
+
 update() {
   apt-get update
 }
@@ -58,13 +64,6 @@ install() {
 
 install_rust() {
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-}
-
-main() {
-  update
-  install
-  install_rust
-
 }
 
 #===============================================================================

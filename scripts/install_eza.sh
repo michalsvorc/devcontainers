@@ -32,23 +32,23 @@ readonly target_path="${2:-/tmp}"
 # Functions
 #===============================================================================
 
-function main() {
+main() {
   printf "Installing %s %s\n" "${REPOSITORY}" "${tag:-latest}"
   install
 }
 
-function get_latest_tag() {
+get_latest_tag() {
   local -r url="https://api.github.com/repos/${REPOSITORY}/releases/latest"
   curl -s "${url}" | jq -r .tag_name
 }
 
-function download() {
+download() {
   local -r url="https://github.com/${REPOSITORY}/archive/refs/tags/${tag}.tar.gz"
   curl -L "${url}" |
     tar -xz -C "${target_path}"
 }
 
-function install() {
+install() {
   local -r name="${REPOSITORY#*/}"
   local crate="${name}"
   if [[ -n "${tag}" ]]; then
