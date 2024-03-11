@@ -75,15 +75,13 @@ Features:
 Environment id: `python`
 
 Features:
-- [Python 3.10.x](https://www.python.org/downloads/)
 - [Python Version Manager](https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv)
 
 ### Go
 
-Environment id: `golang`
+Environment id: `go`
 
 Features:
-- Version set in Dockerfile.golang
 - [Managing Go Installations](https://go.dev/doc/manage-install)
 
 ## Troubleshooting
