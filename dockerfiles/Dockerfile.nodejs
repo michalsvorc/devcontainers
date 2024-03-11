@@ -15,8 +15,7 @@ ARG SCRIPTS_PATH
 # Copy scripts from local directory to the container
 #===============================================================================
 
-WORKDIR "${SCRIPTS_PATH}"
-COPY "scripts" "."
+COPY 'scripts' "${SCRIPTS_PATH}"
 
 #===============================================================================
 # SHELL for executing Docker commands

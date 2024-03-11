@@ -21,8 +21,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Copy scripts from local directory to the container
 #===============================================================================
 
-WORKDIR "${SCRIPTS_PATH}"
-COPY "scripts" "."
+COPY 'scripts' "${SCRIPTS_PATH}"
 
 #===============================================================================
 # Update package repositories and install new packages
