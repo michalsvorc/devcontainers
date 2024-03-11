@@ -57,7 +57,7 @@ Environment id: `base`
 To update system packages in existing `base` image, use Docker `--no-cache` flag:
 
 ```console
-./scripts/docker.sh build --no-cache
+./docker build --no-cache
 ```
 
 You must rebuild environment images and create new containers as well.
