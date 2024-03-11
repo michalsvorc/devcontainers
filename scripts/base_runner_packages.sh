@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Installs Debian packages for runner stage.
+# Installs Debian packages for base environment runner stage.
 # Dependencies: apt-get
 #
 # Author: Michal Svorc <dev@michalsvorc.com>
