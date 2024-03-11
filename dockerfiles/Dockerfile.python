@@ -8,8 +8,8 @@ FROM devcontainer:base
 # Build arguments
 #===============================================================================
 
-ARG user_name
-ARG user_profile
+ARG USER_NAME
+ARG SCRIPTS_PATH
 
 #===============================================================================
 # SHELL for executing Docker commands
@@ -18,33 +18,29 @@ ARG user_profile
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 #===============================================================================
-# Install pyenv dependencies
-#
-# Link: https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+# Copy scripts from local directory to the container
 #===============================================================================
 
-RUN apt-get update \
-  && DEBIAN_FRONTEND=noninteractive \
-  apt-get install \
-  --assume-yes \
-  --no-install-recommends \
-  --quiet \
-  python3-pip \
-  python3-venv \
-  && rm -rf /var/lib/apt/lists/*
+COPY 'scripts' "${SCRIPTS_PATH}"
 
 #===============================================================================
-# User environment variables
+# Update package repositories and install new packages
 #===============================================================================
 
-ENV HOME "/home/${user_name}"
-ENV USER "$user_name"
+RUN "${SCRIPTS_PATH}/python_packages.sh" "${SCRIPTS_PATH}"
 
 #===============================================================================
 # Set the non-root user
 #===============================================================================
 
-USER $USER
+USER "${USER}"
+
+#===============================================================================
+# Set user environment variables
+#===============================================================================
+
+ENV HOME "/home/${USER_NAME}"
+ENV USER "${USER_NAME}"
 
 #===============================================================================
 # Create $HOME directories
@@ -53,32 +49,31 @@ USER $USER
 ARG dir_bin="${HOME}/.local/bin"
 ARG dir_profile="${HOME}/.local/profile"
 ARG dir_ssh="${HOME}/.ssh"
+ARG dir_zsh_completions="${HOME}/.local/share/zsh/site-functions"
 
 RUN mkdir -p \
-  "$dir_bin" \
-  "$dir_profile" \
-  "$dir_ssh" \
-  && chmod 700 "$dir_ssh"
+  "${dir_bin}" \
+  "${dir_profile}" \
+  "${dir_ssh}" \
+  "${dir_zsh_completions}" \
+  && chmod 700 "${dir_ssh}"
 
 #===============================================================================
-# Change working directory
+# Setup configuration files
 #===============================================================================
 
-WORKDIR "$HOME"
+RUN "${SCRIPTS_PATH}/setup_user_profile.sh"
+RUN "${SCRIPTS_PATH}/setup_nvim_config.sh"
 
 #===============================================================================
-# User profile configuration files
+# Working directory
 #===============================================================================
 
-RUN git clone \
-  --recurse-submodules \
-  --depth 1 \
-  --branch 'main' \
-  "https://github.com/${user_profile}" "$dir_profile" \
-  && bash "${dir_profile}/scripts/init.sh"
+WORKDIR "${HOME}"
 
 #===============================================================================
 # Runtime entrypoint
 #===============================================================================
 
 ENTRYPOINT ["/bin/zsh", "--login"]
+#=============================================================================== # Runtime entrypoint #=============================================================================== ENTRYPOINT ["/bin/zsh", "--login"]
