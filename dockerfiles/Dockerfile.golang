@@ -8,8 +8,8 @@ FROM devcontainer:base
 # Build arguments
 #===============================================================================
 
-ARG user_name
-ARG user_profile
+ARG USER_NAME
+ARG SCRIPTS_PATH
 
 #===============================================================================
 # SHELL for executing Docker commands
@@ -18,17 +18,23 @@ ARG user_profile
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 #===============================================================================
-# User environment variables
+# Copy scripts from local directory to the container
 #===============================================================================
 
-ENV HOME "/home/${user_name}"
-ENV USER "$user_name"
+COPY 'scripts' "${SCRIPTS_PATH}"
 
 #===============================================================================
 # Set the non-root user
 #===============================================================================
 
-USER $USER
+USER "${USER}"
+
+#===============================================================================
+# Set user environment variables
+#===============================================================================
+
+ENV HOME "/home/${USER_NAME}"
+ENV USER "${USER_NAME}"
 
 #===============================================================================
 # Create $HOME directories
@@ -36,51 +42,34 @@ USER $USER
 
 ARG dir_bin="${HOME}/.local/bin"
 ARG dir_profile="${HOME}/.local/profile"
-ARG dir_share="${HOME}/.local/share"
 ARG dir_ssh="${HOME}/.ssh"
+ARG dir_zsh_completions="${HOME}/.local/share/zsh/site-functions"
 
 RUN mkdir -p \
-  "$dir_bin" \
-  "$dir_profile" \
-  "$dir_share" \
-  "$dir_ssh" \
-  && chmod 700 "$dir_ssh"
+  "${dir_bin}" \
+  "${dir_profile}" \
+  "${dir_ssh}" \
+  "${dir_zsh_completions}" \
+  && chmod 700 "${dir_ssh}"
 
 #===============================================================================
-# Change working directory
+# Setup configuration files
 #===============================================================================
 
-WORKDIR "$HOME"
+RUN "${SCRIPTS_PATH}/setup_user_profile.sh"
+RUN "${SCRIPTS_PATH}/setup_nvim_config.sh"
 
 #===============================================================================
-# User profile configuration files
+# Install Go programming language
 #===============================================================================
 
-RUN git clone \
-  --recurse-submodules \
-  --depth 1 \
-  --branch 'main' \
-  "https://github.com/${user_profile}" "$dir_profile" \
-  && bash "${dir_profile}/scripts/init.sh"
+RUN "${SCRIPTS_PATH}/install_go.sh" "${dir_bin}"
 
 #===============================================================================
-# Install Go
+# Working directory
 #===============================================================================
 
-ARG go_version='1.19.2'
-ARG go_tarfile="go${go_version}.linux-amd64.tar.gz"
-ARG go_install_dir="go${go_version}.linux-amd64.tar.gz"
-
-RUN curl -JLO "https://go.dev/dl/${go_tarfile}" \
-  && tar -C "$dir_share" -xzf "$go_tarfile" \
-  && rm "$go_tarfile" \
-  && ln -sfn "${dir_share}/go/bin/go" "${dir_bin}/go" \
-  && ln -sfn "${dir_share}/go/bin/gofmt" "${dir_bin}/gofmt" \
-  && printf '%s\nexport PATH="%s:${PATH}"\n' \
-  '# Add Go binary to PATH' \
-  "$(${dir_bin}/go env GOPATH)/bin/" \
-  >> "${HOME}/.profile"
-
+WORKDIR "${HOME}"
 
 #===============================================================================
 # Runtime entrypoint
