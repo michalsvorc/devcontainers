@@ -52,6 +52,7 @@ def parse_arguments():
         "-e",
         "--env",
         choices=environments,
+        default=environments[0],
         help=f"specify Docker environment: {environments}",
     )
     parser.add_argument(
