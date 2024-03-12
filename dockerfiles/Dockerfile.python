@@ -33,14 +33,10 @@ RUN "${SCRIPTS_PATH}/python_packages.sh" "${SCRIPTS_PATH}"
 # Set the non-root user
 #===============================================================================
 
-USER "${USER}"
-
-#===============================================================================
-# Set user environment variables
-#===============================================================================
-
-ENV HOME "/home/${USER_NAME}"
 ENV USER "${USER_NAME}"
+ENV HOME "/home/${USER_NAME}"
+
+USER "${USER}"
 
 #===============================================================================
 # Create $HOME directories
