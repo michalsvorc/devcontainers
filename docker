@@ -21,6 +21,7 @@ from enum import Enum
 VERSION = "2.0.0"
 IMAGE_NAME = "devcontainer"
 NETWORK = "bridge"
+USER_NAME = "user"
 
 environments = [
     "base",
@@ -80,23 +81,23 @@ def main():
 
 
 def build(image, dockerfile, rest_of_args):
-    USER_NAME = "user"
     SCRIPTS_PATH = "/opt/scripts"
-    build_args = {"USER_NAME": USER_NAME, "SCRIPTS_PATH": SCRIPTS_PATH}
     env = {"BUILDKIT_INLINE_CACHE": "1"}
     dockerfile_path = f"{script_path}/dockerfiles/{dockerfile}"
     command = [
         "docker",
         "build",
+    ]
+    args = [
         "--file",
         dockerfile_path,
         "--tag",
         image,
     ]
-
+    build_args = {"USER_NAME": USER_NAME, "SCRIPTS_PATH": SCRIPTS_PATH}
+    command.extend(args)
     for key, value in build_args.items():
         command.extend(["--build-arg", f"{key}={value}"])
-
     command.extend(rest_of_args)
     command.append(script_path)
     logging.info(f"Building image {image} based on {dockerfile}.")
@@ -108,6 +109,8 @@ def run(image, network, rest_of_args):
     command = [
         "docker",
         "run",
+    ]
+    args = [
         "-it",
         "--network",
         network,
@@ -115,6 +118,14 @@ def run(image, network, rest_of_args):
         container,
         "--init",
     ]
+    volumes = [
+        "--mount",
+        f"source=devcontainer_ssh,target=/home/{USER_NAME}/.ssh",
+        "--mount",
+        f"source=devcontainer_work,target=/home/{USER_NAME}/work",
+    ]
+    command.extend(args)
+    command.extend(volumes)
     command.extend(rest_of_args)
     command.append(image)
     logging.info(f"Running container {container}.")
