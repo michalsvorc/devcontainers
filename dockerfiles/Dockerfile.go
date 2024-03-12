@@ -65,7 +65,7 @@ RUN "${SCRIPTS_PATH}/install_go.sh" "${dir_bin}"
 # Working directory
 #===============================================================================
 
-WORKDIR "${HOME}"
+WORKDIR "${HOME}/work"
 
 #===============================================================================
 # Runtime entrypoint

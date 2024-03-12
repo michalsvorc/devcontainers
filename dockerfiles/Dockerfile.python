@@ -65,7 +65,7 @@ RUN "${SCRIPTS_PATH}/setup_nvim_config.sh"
 # Working directory
 #===============================================================================
 
-WORKDIR "${HOME}"
+WORKDIR "${HOME}/work"
 
 #===============================================================================
 # Runtime entrypoint
