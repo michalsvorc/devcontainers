@@ -2,7 +2,7 @@
 # Builder image
 #===============================================================================
 
-FROM debian:bookworm-slim AS builder
+FROM debian:bookworm-backports AS builder
 
 #===============================================================================
 # Build arguments
