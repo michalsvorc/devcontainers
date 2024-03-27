@@ -29,7 +29,6 @@ packages=(
   g++
   gettext
   git
-  golang
   gpg
   jq
   libtool-bin
