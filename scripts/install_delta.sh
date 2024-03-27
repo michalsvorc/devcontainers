@@ -24,6 +24,10 @@ set -o errtrace # Ensure the error trap handler is properly inherited.
 
 readonly REPOSITORY='dandavison/delta'
 
+#===============================================================================
+# Arguments
+#===============================================================================
+
 tag="${1:-}"
 readonly target_path="${2:-/tmp}"
 

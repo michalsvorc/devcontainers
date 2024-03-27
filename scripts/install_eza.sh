@@ -25,7 +25,11 @@ set -o errtrace # Ensure the error trap handler is properly inherited.
 
 readonly REPOSITORY='eza-community/eza'
 
-tag="${1:-}"
+#===============================================================================
+# Arguments
+#===============================================================================
+
+readonly tag="${1:-}"
 readonly target_path="${2:-/tmp}"
 
 #===============================================================================

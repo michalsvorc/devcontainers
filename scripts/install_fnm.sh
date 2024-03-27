@@ -20,11 +20,11 @@ set -o errtrace # Ensure the error trap handler is properly inherited.
 # set -o xtrace   # Enable shell script debugging mode.
 
 #===============================================================================
-# Variables
+# Arguments
 #===============================================================================
 
-dir_bin="${1:-${HOME}/.local/bin}"
-dir_zsh_completions="${2:-${HOME}/.local/share/zsh/site-functions}"
+readonly dir_bin="${1:-${HOME}/.local/bin}"
+readonly dir_zsh_completions="${2:-${HOME}/.local/share/zsh/site-functions}"
 
 #===============================================================================
 # Functions

@@ -23,6 +23,10 @@ set -o errtrace # Ensure the error trap handler is properly inherited.
 
 readonly REPOSITORY_URL='https://github.com/michalsvorc/profile'
 
+#===============================================================================
+# Arguments
+#===============================================================================
+
 readonly dir_profile="${1-$HOME/.local/profile}"
 readonly branch="${2:-main}"
 
