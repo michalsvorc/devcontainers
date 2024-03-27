@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Installs Debian packages for base environment builder stage.
-# Dependencies: apt-get, curl, sh
+# Installs Rust programming language.
+# Dependencies: curl
 #
 # Author: Michal Svorc <dev@michalsvorc.com>
 # License: MIT license (https://opensource.org/licenses/MIT)
@@ -18,47 +18,21 @@ set -o errtrace # Ensure the error trap handler is properly inherited.
 # set -o xtrace   # Enable shell script debugging mode.
 
 #===============================================================================
-# Variables
-#===============================================================================
-
-packages=(
-  build-essential
-  ca-certificates
-  cmake
-  curl
-  g++
-  gettext
-  git
-  golang
-  gpg
-  jq
-  libtool-bin
-  make
-  ninja-build
-  pkg-config
-  unzip
-)
-
-#===============================================================================
 # Functions
 #===============================================================================
 
 main() {
-  update
   install
 }
 
-update() {
-  apt-get update
-}
-
 install() {
-  DEBIAN_FRONTEND=noninteractive \
-    apt-get install \
-    --assume-yes \
-    --no-install-recommends \
-    --quiet \
-    "${packages[@]}"
+  local -r SOURCE_URL='https://sh.rustup.rs'
+  curl \
+    --proto '=https' \
+    --tlsv1.2 \
+    -sSf \
+    "${SOURCE_URL}" |
+    sh -s -- -y
 }
 
 #===============================================================================
