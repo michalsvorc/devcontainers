@@ -27,7 +27,7 @@ COPY 'scripts' "${SCRIPTS_PATH}"
 # Update package repositories and install new packages
 #===============================================================================
 
-RUN "${SCRIPTS_PATH}/python_packages.sh" "${SCRIPTS_PATH}"
+RUN "${SCRIPTS_PATH}/packages_python.sh" "${SCRIPTS_PATH}"
 
 #===============================================================================
 # Set the non-root user
