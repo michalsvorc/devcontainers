@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 #
 # Installs Go programming language.
-# https://github.com/Schniz/fnm
-# https://github.com/Schniz/fnm?tab=readme-ov-file#installation
 # Dependencies: curl
 #
 # Author: Michal Svorc <dev@michalsvorc.com>
@@ -23,17 +21,22 @@ set -o errtrace # Ensure the error trap handler is properly inherited.
 # Variables
 #===============================================================================
 
-dir_bin="${1:-${HOME}/.local/bin}"
-install_dir="${HOME}/.go"
+readonly DEFAULT_GO_VERSION='1.22.1'
+readonly install_dir="${HOME}/.go"
 
-GO_VERSION='1.19.2'
+#===============================================================================
+# Arguments
+#===============================================================================
+
+readonly dir_bin="${1:-/usr/bin}"
+readonly go_version="${2:-$DEFAULT_GO_VERSION}"
 
 #===============================================================================
 # Functions
 #===============================================================================
 
 main() {
-  printf 'Installing go %s\n' "${GO_VERSION}"
+  printf 'Installing go %s\n' "${go_version}"
   mkdir -p "${install_dir}" &&
     install &&
     link &&
@@ -41,7 +44,7 @@ main() {
 }
 
 install() {
-  local -r asset="go${GO_VERSION}.linux-amd64.tar.gz"
+  local -r asset="go${go_version}.linux-amd64.tar.gz"
   curl -JLO "https://go.dev/dl/${asset}" &&
     tar -C "${install_dir}" -xzf "${asset}" &&
     rm "${asset}"
