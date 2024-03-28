@@ -33,7 +33,6 @@ RUN "${SCRIPTS_PATH}/packages_base_builder.sh"
 # Install additional programming languages
 #===============================================================================
 
-RUN "${SCRIPTS_PATH}/install_go.sh"
 RUN "${SCRIPTS_PATH}/install_rust.sh"
 
 #===============================================================================
@@ -41,7 +40,6 @@ RUN "${SCRIPTS_PATH}/install_rust.sh"
 #===============================================================================
 
 RUN "${SCRIPTS_PATH}/install_neovim.sh"
-RUN "${SCRIPTS_PATH}/install_lazygit.sh"
 RUN "${SCRIPTS_PATH}/install_delta.sh"
 RUN "${SCRIPTS_PATH}/install_eza.sh"
 
@@ -106,7 +104,6 @@ RUN ln -s "$(which batcat)" /usr/local/bin/bat
 
 COPY --from=builder /usr/local/bin/nvim /usr/local/bin/nvim
 COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
-COPY --from=builder /opt/go/bin/lazygit /usr/local/bin/lazygit
 COPY --from=builder /usr/local/bin/delta /usr/local/bin/delta
 COPY --from=builder /root/.cargo/bin/eza /usr/local/bin/eza
 
