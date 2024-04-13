@@ -33,7 +33,6 @@ RUN "${SCRIPTS_PATH}/packages_base_builder.sh"
 # Install additional programming languages
 #===============================================================================
 
-RUN "${SCRIPTS_PATH}/install_go.sh"
 RUN "${SCRIPTS_PATH}/install_rust.sh"
 
 #===============================================================================
