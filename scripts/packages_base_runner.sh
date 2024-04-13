@@ -34,7 +34,6 @@ packages=(
   jq
   less
   locales
-  nnn
   nodejs
   npm
   make
