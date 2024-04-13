@@ -38,6 +38,7 @@ readonly go_version="${2:-$DEFAULT_GO_VERSION}"
 main() {
   printf 'Installing go %s\n' "${go_version}"
   mkdir -p "${install_dir}" &&
+    cd "${install_dir}" &&
     install &&
     link &&
     add_to_path
@@ -45,7 +46,8 @@ main() {
 
 install() {
   local -r asset="go${go_version}.linux-amd64.tar.gz"
-  curl -JLO "https://go.dev/dl/${asset}" &&
+  local -r source_url="https://go.dev/dl/${asset}"
+  curl -JLO "${source_url}" &&
     tar -C "${install_dir}" -xzf "${asset}" &&
     rm "${asset}"
 }
