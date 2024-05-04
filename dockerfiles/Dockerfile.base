@@ -41,6 +41,7 @@ RUN "${SCRIPTS_PATH}/install_rust.sh"
 
 RUN "${SCRIPTS_PATH}/install_neovim.sh"
 RUN "${SCRIPTS_PATH}/install_eza.sh"
+RUN "${SCRIPTS_PATH}/install_yazi.sh"
 
 #===============================================================================
 # Runner image
@@ -104,6 +105,7 @@ RUN ln -s "$(which batcat)" /usr/local/bin/bat
 COPY --from=builder /usr/local/bin/nvim /usr/local/bin/nvim
 COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
 COPY --from=builder /root/.cargo/bin/eza /usr/local/bin/eza
+COPY --from=builder /root/.cargo/bin/yazi /usr/local/bin/yazi
 
 #===============================================================================
 # Add non-root user account
