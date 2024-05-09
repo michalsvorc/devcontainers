@@ -4,15 +4,15 @@ Docker development containers with my [profile](https://github.com/michalsvorc/p
 
 ## Features
 
-- `./docker` script for Docker commands automation
+- `./devcontainer` script for Docker commands automation
 - Debian slim images
 - Rootless containers
 - [Zsh](https://www.zsh.org/) shell
 
 ## Usage
 
-```console
-./docker --help
+```shell
+./devcontainer --help
 ```
 
 ## Container networking
@@ -20,34 +20,34 @@ Docker development containers with my [profile](https://github.com/michalsvorc/p
 Find container IP address:
 
 ```
-docker network inspect bridge | jq '.[].Containers'
+./devcontainer network inspect bridge | jq '.[].Containers'
 ```
 
 ## Environments
 
 Every environment is based on `base` image. The `base` image must be built prior to building any other environment:
 
-```console
-./docker build
+```shell
+./devcontainer build
 ```
 
 Build a specific environment image:
 
-```console
-./docker --env <environment_id> build
+```shell
+./devcontainer --env <environment_id> build
 ```
 
 Run environment container:
 
-```console
-./docker --env <environment_id> run
+```shell
+./devcontainer --env <environment_id> run
 ```
 
 Example:
 
-```console
-./docker --env python build --no-cache
-./docker --env python run --rm
+```shell
+./devcontainer --env python build --no-cache
+./devcontainer --env python run --rm
 ```
 
 ### Base
@@ -56,8 +56,8 @@ Environment id: `base`
 
 To update system packages in existing `base` image, use Docker `--no-cache` flag:
 
-```console
-./docker build --no-cache
+```shell
+./devcontainer build --no-cache
 ```
 
 You must rebuild environment images and create new containers as well.
@@ -88,9 +88,9 @@ Features:
 
 ### Apple M1 MacBook
 
-If you encounter issues with missing libraries, add `--platform linux/x86_64` flag after native docker commands:
+If you encounter issues with missing libraries, add `--platform linux/x86_64` flag after native Docker commands:
 
-```console
-$ ./docker --env <environment> build --platform linux/x86_64
-$ ./docker --env <environment> run --platform linux/x86_64
+```shell
+$ ./devcontainer --env <environment> build --platform linux/x86_64
+$ ./devcontainer --env <environment> run --platform linux/x86_64
 ```
