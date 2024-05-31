@@ -120,6 +120,8 @@ def run(image, network, rest_of_args):
     ]
     volumes = [
         "--mount",
+        f"source=devcontainer_aws,target=/home/{USER_NAME}/.aws",
+        "--mount",
         f"source=devcontainer_ssh,target=/home/{USER_NAME}/.ssh",
         "--mount",
         f"source=devcontainer_work,target=/home/{USER_NAME}/work",
