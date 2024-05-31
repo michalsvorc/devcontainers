@@ -30,6 +30,7 @@ packages=(
   fzf
   g++
   git
+  gpg
   htop
   jq
   less
