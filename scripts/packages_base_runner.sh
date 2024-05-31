@@ -35,6 +35,7 @@ packages=(
   jq
   less
   locales
+  lsb-release
   nodejs
   npm
   make
