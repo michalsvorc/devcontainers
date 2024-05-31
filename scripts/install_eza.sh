@@ -37,7 +37,7 @@ readonly target_path="${2:-/tmp}"
 #===============================================================================
 
 main() {
-  printf "Installing %s %s\n" "${REPOSITORY}" "${tag:-latest}"
+  printf 'Installing %s %s\n' "${REPOSITORY}" "${tag:-latest}"
   install
 }
 

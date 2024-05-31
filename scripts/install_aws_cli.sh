@@ -32,7 +32,7 @@ readonly EXTRACT_DIR='/opt'
 #===============================================================================
 
 main() {
-  printf "Installing %s\n" "${REPOSITORY}"
+  printf 'Installing %s\n' "${REPOSITORY}"
   download &&
     unzip_asset &&
     install "${@}"

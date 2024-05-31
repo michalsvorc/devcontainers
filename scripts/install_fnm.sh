@@ -31,7 +31,7 @@ readonly dir_zsh_completions="${2:-${HOME}/.local/share/zsh/site-functions}"
 #===============================================================================
 
 main() {
-  printf "Installing fnm\n"
+  printf 'Installing fnm\n'
   install
   set_use_on_cd
   generate_completions

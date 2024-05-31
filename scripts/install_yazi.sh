@@ -34,7 +34,7 @@ readonly REPOSITORY='sxyazi/yazi.git'
 #===============================================================================
 
 main() {
-  printf "Installing %s\n" "${REPOSITORY}"
+  printf 'Installing %s\n' "${REPOSITORY}"
   install
 }
 

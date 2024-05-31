@@ -36,7 +36,7 @@ readonly target_path="${2:-/tmp}"
 #===============================================================================
 
 main() {
-  printf "Installing %s %s\n" "${REPOSITORY}" "${tag}"
+  printf 'Installing %s %s\n' "${REPOSITORY}" "${tag}"
   download &&
     cd "$(get_asset_dir)" &&
     install
@@ -51,7 +51,7 @@ download() {
 get_asset_dir() {
   local -r name="${REPOSITORY#*/}"
   local -r download_dir="${target_path}/${name}-${tag}"
-  printf "%s" "${download_dir}"
+  printf '%s' "${download_dir}"
 }
 
 install() {
