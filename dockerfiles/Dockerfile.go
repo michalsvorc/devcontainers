@@ -52,8 +52,8 @@ RUN mkdir -p \
 # Setup configuration files
 #===============================================================================
 
-RUN "${SCRIPTS_PATH}/setup_user_profile.sh"
-RUN "${SCRIPTS_PATH}/setup_nvim_config.sh"
+RUN "${SCRIPTS_PATH}/setup_user_profile.sh" \
+  && "${SCRIPTS_PATH}/setup_neovim_config.sh"
 
 #===============================================================================
 # Install Go programming language

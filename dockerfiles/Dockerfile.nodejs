@@ -52,21 +52,17 @@ RUN mkdir -p \
 # Setup configuration files
 #===============================================================================
 
-RUN "${SCRIPTS_PATH}/setup_user_profile.sh"
-RUN "${SCRIPTS_PATH}/setup_nvim_config.sh"
+RUN "${SCRIPTS_PATH}/setup_user_profile.sh" \
+  && "${SCRIPTS_PATH}/setup_neovim_config.sh"
 
 #===============================================================================
 # Install fnm (Fast Node Manager)
+# && Install Node.js current LTS version
 # https://github.com/Schniz/fnm
 #===============================================================================
 
-RUN "${SCRIPTS_PATH}/install_fnm.sh" "${dir_bin}" "${dir_zsh_completions}"
-
-#===============================================================================
-# Install Node.js current LTS version
-#===============================================================================
-
-RUN "${dir_bin}/fnm" install --lts
+RUN "${SCRIPTS_PATH}/install_fnm.sh" "${dir_bin}" "${dir_zsh_completions}" \
+  && "${dir_bin}/fnm" install --lts
 
 #===============================================================================
 # Working directory
