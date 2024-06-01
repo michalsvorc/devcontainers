@@ -8,52 +8,8 @@ FROM devcontainer:base
 # Build arguments
 #===============================================================================
 
-ARG USER_NAME
 ARG SCRIPTS_PATH
-
-#===============================================================================
-# SHELL for executing Docker commands
-#===============================================================================
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-#===============================================================================
-# Copy scripts from local directory to the container
-#===============================================================================
-
-COPY 'scripts' "${SCRIPTS_PATH}"
-
-#===============================================================================
-# Set the non-root user
-#===============================================================================
-
-ENV USER "${USER_NAME}"
-ENV HOME "/home/${USER_NAME}"
-
-USER "${USER}"
-
-#===============================================================================
-# Create $HOME directories
-#===============================================================================
-
 ARG dir_bin="${HOME}/.local/bin"
-ARG dir_profile="${HOME}/.local/profile"
-ARG dir_ssh="${HOME}/.ssh"
-ARG dir_zsh_completions="${HOME}/.local/share/zsh/site-functions"
-
-RUN mkdir -p \
-  "${dir_bin}" \
-  "${dir_profile}" \
-  "${dir_ssh}" \
-  "${dir_zsh_completions}" \
-  && chmod 700 "${dir_ssh}"
-
-#===============================================================================
-# Setup configuration files
-#===============================================================================
-
-RUN "${SCRIPTS_PATH}/setup_user_profile.sh" \
-  && "${SCRIPTS_PATH}/setup_neovim_config.sh"
 
 #===============================================================================
 # Install Go programming language

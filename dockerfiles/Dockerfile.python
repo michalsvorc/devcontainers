@@ -12,16 +12,11 @@ ARG USER_NAME
 ARG SCRIPTS_PATH
 
 #===============================================================================
-# SHELL for executing Docker commands
+# Set the root user
 #===============================================================================
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-#===============================================================================
-# Copy scripts from local directory to the container
-#===============================================================================
-
-COPY 'scripts' "${SCRIPTS_PATH}"
+ENV USER 'root'
+USER "${USER}"
 
 #===============================================================================
 # Update package repositories and install new packages
@@ -34,32 +29,7 @@ RUN "${SCRIPTS_PATH}/packages_python.sh" "${SCRIPTS_PATH}"
 #===============================================================================
 
 ENV USER "${USER_NAME}"
-ENV HOME "/home/${USER_NAME}"
-
 USER "${USER}"
-
-#===============================================================================
-# Create $HOME directories
-#===============================================================================
-
-ARG dir_bin="${HOME}/.local/bin"
-ARG dir_profile="${HOME}/.local/profile"
-ARG dir_ssh="${HOME}/.ssh"
-ARG dir_zsh_completions="${HOME}/.local/share/zsh/site-functions"
-
-RUN mkdir -p \
-  "${dir_bin}" \
-  "${dir_profile}" \
-  "${dir_ssh}" \
-  "${dir_zsh_completions}" \
-  && chmod 700 "${dir_ssh}"
-
-#===============================================================================
-# Setup configuration files
-#===============================================================================
-
-RUN "${SCRIPTS_PATH}/setup_user_profile.sh" \
-  && "${SCRIPTS_PATH}/setup_neovim_config.sh"
 
 #===============================================================================
 # Working directory
