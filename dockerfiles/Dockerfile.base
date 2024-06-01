@@ -138,16 +138,19 @@ USER "${USER}"
 # Create directories in $HOME
 #===============================================================================
 
+ARG dir_aws="${HOME}/.aws"
 ARG dir_bin="${HOME}/.local/bin"
 ARG dir_profile="${HOME}/.local/profile"
 ARG dir_ssh="${HOME}/.ssh"
 ARG dir_zsh_completions="${HOME}/.local/share/zsh/site-functions"
 
 RUN mkdir -p \
+  "${dir_aws}" \
   "${dir_bin}" \
   "${dir_profile}" \
   "${dir_ssh}" \
   "${dir_zsh_completions}" \
+  && chmod 700 "${dir_aws}" \
   && chmod 700 "${dir_ssh}"
 
 #===============================================================================
