@@ -47,6 +47,7 @@ packages=(
   shellcheck
   tmux
   unzip
+  zip
   zsh
 )
 
