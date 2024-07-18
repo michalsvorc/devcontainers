@@ -35,8 +35,7 @@ RUN "${SCRIPTS_PATH}/packages_base_builder.sh"
 
 RUN "${SCRIPTS_PATH}/install_rust.sh" \
   && "${SCRIPTS_PATH}/install_neovim.sh" \
-  && "${SCRIPTS_PATH}/install_eza.sh" \
-  && "${SCRIPTS_PATH}/install_yazi.sh"
+  && "${SCRIPTS_PATH}/install_eza.sh"
 
 #===============================================================================
 # Runner image
@@ -106,7 +105,6 @@ RUN ln -s "$(which fdfind)" '/usr/local/bin/fd' \
 COPY --from=builder /usr/local/bin/nvim /usr/local/bin/nvim
 COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
 COPY --from=builder /root/.cargo/bin/eza /usr/local/bin/eza
-COPY --from=builder /root/.cargo/bin/yazi /usr/local/bin/yazi
 
 #===============================================================================
 # Copy scripts from local directory to the container
