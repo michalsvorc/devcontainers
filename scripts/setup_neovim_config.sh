@@ -22,7 +22,7 @@ set -o errtrace # Ensure the error trap handler is properly inherited.
 #===============================================================================
 
 readonly DIR_CONFIG="${HOME}/.config"
-readonly REPOSITORY_URL='https://github.com/michalsvorc/nvim-config-lazyvim'
+readonly REPOSITORY_URL='https://github.com/michalsvorc/nvim-config'
 
 #===============================================================================
 # Arguments
