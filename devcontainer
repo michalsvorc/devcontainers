@@ -110,6 +110,7 @@ def run(image, network, rest_of_args):
         "docker",
         "run",
     ]
+
     args = [
         "-it",
         "--network",
@@ -118,24 +119,36 @@ def run(image, network, rest_of_args):
         container,
         "--init",
     ]
-    volumes = [
-        "--mount",
-        f"type=volume,source=devcontainer_aws,target=/home/{USER_NAME}/.aws",
-        "--mount",
-        f"type=volume,source=devcontainer_gnupg,target=/home/{USER_NAME}/.gnupg",
-        "--mount",
-        f"type=volume,source=devcontainer_ssh,target=/home/{USER_NAME}/.ssh",
-        "--mount",
-        f"type=volume,source=devcontainer_secret,target=/home/{USER_NAME}/.secret",
-        "--mount",
-        f"type=volume,source=devcontainer_work,target=/home/{USER_NAME}/work",
+
+    volume_targets = [
+        ".aws",
+        ".gnupg",
+        ".ssh",
+        ".secret",
+        "work",
     ]
+
+    volumes = generate_volume_mounts(USER_NAME, volume_targets)
+
     command.extend(args)
     command.extend(volumes)
     command.extend(rest_of_args)
     command.append(image)
+
     logging.info(f"Running container {container}.")
     subprocess.run(command, check=True)
+
+
+def generate_volume_mounts(user_name, volume_targets):
+    volumes = []
+    for name in volume_targets:
+        volumes.extend(
+            [
+                "--mount",
+                f"type=volume,source=devcontainer_{name.strip('.')},target=/home/{user_name}/{name}",
+            ]
+        )
+    return volumes
 
 
 def set_logging_level(level):
