@@ -160,3 +160,10 @@ RUN mkdir -p \
 RUN "${SCRIPTS_PATH}/setup_user_profile.sh" \
   && "${SCRIPTS_PATH}/setup_neovim_config.sh"
 
+#===============================================================================
+# Set an environment variable to indicate the virtual environment is active
+#===============================================================================
+
+ARG VIRTUAL_ENV='VIRTUAL_ENV=1'
+
+RUN printf '\nexport %s\n' "${VIRTUAL_ENV}" >> "${HOME}/.profile"
