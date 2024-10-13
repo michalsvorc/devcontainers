@@ -31,6 +31,7 @@ packages=(
   g++
   git
   gpg
+  gpg-agent
   htop
   jq
   less
