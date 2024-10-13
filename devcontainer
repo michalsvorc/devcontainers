@@ -122,7 +122,11 @@ def run(image, network, rest_of_args):
         "--mount",
         f"source=devcontainer_aws,target=/home/{USER_NAME}/.aws",
         "--mount",
+        f"source=devcontainer_gnupg,target=/home/{USER_NAME}/.gnupg",
+        "--mount",
         f"source=devcontainer_ssh,target=/home/{USER_NAME}/.ssh",
+        "--mount",
+        f"source=devcontainer_secret,target=/home/{USER_NAME}/.secret",
         "--mount",
         f"source=devcontainer_work,target=/home/{USER_NAME}/work",
     ]
