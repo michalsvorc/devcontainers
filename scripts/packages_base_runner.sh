@@ -45,7 +45,6 @@ packages=(
   procps
   ripgrep
   rsync
-  shellcheck
   tmux
   unzip
   zip
