@@ -27,7 +27,7 @@ environments = [
     "base",
     "nodejs",
     "python",
-    "go",
+    "golang",
 ]
 
 script_path: str = os.path.dirname(os.path.realpath(__file__))

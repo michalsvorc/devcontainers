@@ -15,7 +15,7 @@ ARG dir_bin="${HOME}/.local/bin"
 # Install Go programming language
 #===============================================================================
 
-RUN "${SCRIPTS_PATH}/install_go.sh" "${dir_bin}"
+RUN "${SCRIPTS_PATH}/install_golang.sh" "${dir_bin}"
 
 #===============================================================================
 # Working directory
