@@ -84,9 +84,9 @@ ARG LOCALE="${ISO_LANGUAGE}.${ENCODING}"
 
 RUN locale-gen "${LOCALE}"
 
-ENV LANG "${LOCALE}"
-ENV LANGUAGE "${ISO_LANGUAGE}:en"
-ENV LC_ALL "${LOCALE}"
+ENV LANG="${LOCALE}"
+ENV LANGUAGE="${ISO_LANGUAGE}:en"
+ENV LC_ALL="${LOCALE}"
 
 RUN localedef -i "${ISO_LANGUAGE}" -f "${ENCODING}" "${LOCALE}"
 
@@ -127,8 +127,8 @@ RUN useradd \
 # Set the non-root user
 #===============================================================================
 
-ENV USER "${USER_NAME}"
-ENV HOME "/home/${USER_NAME}"
+ENV USER="${USER_NAME}"
+ENV HOME="/home/${USER_NAME}"
 USER "${USER}"
 
 #===============================================================================
